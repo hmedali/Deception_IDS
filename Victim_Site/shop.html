@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر الأناقة - (موقع الضحية)</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; text-align: center; padding: 50px; }
+        .product-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
+        h1 { color: #333; }
+        .price { color: #e63946; font-size: 24px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>🛍️ متجر الأناقة الإلكتروني</h1>
+    <p>هذا هو الموقع التجريبي (الضحية) الذي قمنا بزرع كود الحماية المخفي بداخله.</p>
+
+    <div class="product-card">
+        <h2>حذاء رياضي</h2>
+        <p class="price">$45.00</p>
+        <button style="padding:10px 20px; background:#007bff; color:white; border:none; border-radius:5px;">شراء الآن</button>
+    </div>
+
+    <!-- كود الفخ (Honeytoken) المولد من منصة ShadowTrap -->
+    <script>
+        (function(){
+            // معرّف الفخ الخاص بهذا الموقع
+            const trapId = "HT-DEMO-999"; 
+            // رابط السيرفر الخاص بكم (الذي يعمل حالياً في التيرمنال)
+            const shadowTrapApi = "http://127.0.0.1:5000/api/alert"; 
+            
+            // مراقبة سلوك المهاجم (مثال: محاولة ضغط كليك يمين لفحص كود الموقع)
+            window.addEventListener('contextmenu', (e) => {
+                
+                // إرسال تنبيه صامت إلى سيرفر ShadowTrap
+                fetch(shadowTrapApi, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trap_id: trapId })
+                })
+                .then(response => console.log("ShadowTrap: Alert sent securely."))
+                .catch(error => console.error("ShadowTrap Error:", error));
+            });
+        })();
+    </script>
+
+</body>
+</html>

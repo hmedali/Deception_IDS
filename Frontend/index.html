@@ -1,70 +1,178 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShadowTrap - Dashboard</title>
+    <title>ShadowTrap | Adaptive IDS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #3b82f6;
+            --danger: #ef4444;
+            --success: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
         }
-        .dashboard-card {
-            background-color: #1e293b;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            border-top: 5px solid #3b82f6; /* لون أزرق تقني */
-            width: 400px;
-        }
-        h1 {
-            color: #60a5fa;
-            margin-bottom: 5px;
-            font-size: 28px;
-        }
-        p {
-            color: #94a3b8;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        .status-badge {
-            display: inline-block;
-            background-color: #064e3b;
-            color: #34d399;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            border: 1px solid #059669;
-        }
-        .version {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #475569;
-        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 280px; background-color: var(--card-bg); padding: 25px 20px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 10; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 50px; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; }
+        .nav-item { padding: 15px; margin-bottom: 12px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; color: var(--text-muted); display: flex; align-items: center; gap: 15px; font-weight: 600; }
+        .nav-item:hover { background-color: rgba(59, 130, 246, 0.1); color: var(--text-main); transform: translateX(5px); }
+        .nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transform: translateX(5px); }
+
+        /* Main Content & Views */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        .view-section { display: none; opacity: 0; transform: translateY(20px); transition: all 0.4s ease-in-out; }
+        .view-section.active-view { display: block; opacity: 1; transform: translateY(0); }
+
+        /* Header */
+        .header { margin-bottom: 40px; }
+        .header h2 { font-size: 28px; margin-bottom: 5px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { color: var(--text-muted); }
+
+        /* Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background-color: var(--card-bg); padding: 25px; border-radius: 12px; border-top: 4px solid var(--primary); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card.danger { border-top-color: var(--danger); }
+        .stat-card.success { border-top-color: var(--success); }
+        .stat-value { font-size: 36px; font-weight: 800; margin-top: 15px; }
+
+        /* Generator Section */
+        .generator-section { background-color: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
+        .btn-primary { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 10px; }
+        .btn-primary:hover { background-color: #2563eb; transform: scale(1.02); }
+        
+        .code-box { background-color: #000; padding: 20px; border-radius: 8px; margin-top: 20px; color: #34d399; font-family: 'Courier New', Courier, monospace; position: relative; display: none; line-height: 1.6; font-size: 14px; overflow-x: auto; border: 1px solid var(--border-color); }
+        .copy-btn { position: absolute; top: 15px; right: 15px; background: #334155; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+        .copy-btn:hover { background: #475569; }
+
+        /* Logs Table */
+        .logs-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .logs-table th, .logs-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .logs-table th { background-color: rgba(255,255,255,0.05); color: var(--text-muted); font-weight: 600; }
+        .logs-table tr:hover { background-color: rgba(255,255,255,0.02); }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge.high { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+
+        /* Toast Notifications */
+        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background-color: var(--card-bg); border-left: 4px solid var(--primary); padding: 15px 25px; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: #fff; font-weight: 600; display: flex; align-items: center; gap: 15px; animation: slideInRight 0.4s ease-out forwards; }
+        .toast.success { border-left-color: var(--success); }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-card">
-        <h1>🛡️ ShadowTrap</h1>
-        <p>نظام الخداع الأمني المتقدم<br>Adaptive Deception-Based IDS</p>
-        
-        <div class="status-badge">
-            ✅ الربط مع فريق العمل ناجح
-        </div>
+    <aside class="sidebar">
+        <div class="logo"><i class="fa-solid fa-shield-halved"></i> ShadowTrap</div>
+        <div class="nav-item active" data-target="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</div>
+        <div class="nav-item" data-target="traps"><i class="fa-solid fa-spider"></i> Trap Management</div>
+        <div class="nav-item" data-target="logs"><i class="fa-solid fa-file-shield"></i> Security Logs</div>
+        <div class="nav-item" data-target="settings"><i class="fa-solid fa-gear"></i> Settings</div>
+    </aside>
 
-        <div class="version">
-           تم التعديل 
-        </div>
-    </div>
+    <main class="main-content">
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view-section active-view">
+            <div class="header">
+                <h2>System Overview</h2>
+                <p>Welcome, Security Administrator</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div style="color: var(--text-muted);">Active Honeytokens</div>
+                    <div class="stat-value" id="active-traps">12</div>
+                </div>
+                <div class="stat-card danger">
+                    <div style="color: var(--text-muted);">Attacks Detected Today</div>
+                    <div class="stat-value" id="daily-attacks">3</div>
+                </div>
+                <div class="stat-card">
+                    <div style="color: var(--text-muted);">Encryption Status</div>
+                    <div class="stat-value" style="color: var(--success); font-size: 24px; margin-top:20px;">
+                        <i class="fa-solid fa-lock"></i> AES-128 GCM Secured
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Traps Management View -->
+        <section id="traps" class="view-section">
+            <div class="header">
+                <h2>Trap Management</h2>
+                <p>Generate and deploy adaptive honeytokens to victim sites.</p>
+            </div>
+            <div class="generator-section">
+                <h3><i class="fa-solid fa-code"></i> Generate New Tracker (JS Snippet)</h3>
+                <p style="color: var(--text-muted); margin: 10px 0 25px 0;">
+                    Generate the unique payload and inject it into the `<head>` or `<body>` of the client's website.
+                </p>
+                <button class="btn-primary" id="generate-btn">
+                    <i class="fa-solid fa-bolt"></i> Generate Payload
+                </button>
+                <div class="code-box" id="snippet-box">
+                    <button class="copy-btn" id="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button>
+                    <code id="generated-code"></code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Logs View -->
+        <section id="logs" class="view-section">
+            <div class="header">
+                <h2>Security Logs</h2>
+                <p>Encrypted intrusion attempts and detected anomalies.</p>
+            </div>
+            <div class="generator-section" style="overflow-x: auto;">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Trap ID</th>
+                            <th>Attacker IP</th>
+                            <th>Severity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-body">
+                        <tr>
+                            <td>2026-10-31 14:22:01</td>
+                            <td>HT-WGB3K8O2I</td>
+                            <td>192.168.1.45</td>
+                            <td><span class="badge high">High (Inspect)</span></td>
+                            <td><button style="background:transparent; border:none; color:var(--primary); cursor:pointer;"><i class="fa-solid fa-eye"></i> View Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Settings View -->
+        <section id="settings" class="view-section">
+            <div class="header">
+                <h2>System Settings</h2>
+                <p>Configure API endpoints and encryption keys.</p>
+            </div>
+            <div class="generator-section">
+                <p style="color: var(--text-muted);">Settings configuration will be available in V1.0</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
