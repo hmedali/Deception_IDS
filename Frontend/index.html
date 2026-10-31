@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShadowTrap | Adaptive IDS</title>
@@ -90,6 +91,10 @@
                 <p>Welcome, Security Administrator</p>
             </div>
             <div class="stats-grid">
+                <div class="generator-section" style="margin-top: 20px;">
+    <h3><i class="fa-solid fa-earth-americas"></i> Attacks by Country</h3>
+    <canvas id="geoChart" height="80"></canvas>
+</div>
                 <div class="stat-card success">
                     <div style="color: var(--text-muted);">Active Honeytokens</div>
                     <div class="stat-value" id="active-traps">12</div>
