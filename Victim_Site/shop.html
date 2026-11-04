@@ -934,20 +934,27 @@ updateCart();
 
 <!-- Honeytoken Security Code - Original Code -->
 
+<!-- كود الفخ المحدث (يحتوي على API Key الخاص بمنصة ShadowTrap) -->
+<!-- كود الفخ المحدث (يحتوي على API Key الخاص بمنصة ShadowTrap) -->
 <script>
-(function(){
-    const trapId = "HT-DEMO-999";
-    const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
-    window.addEventListener('contextmenu', (e) => {
-        fetch(shadowTrapApi, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ trap_id: trapId })
-        })
-        .then(response => console.log("ShadowTrap: Alert sent securely."))
-        .catch(error => console.error("ShadowTrap Error:", error));
-    });
-})();
+    (function(){
+        const trapId = "HT-DEMO-999"; 
+        const clientApiKey = "ST-DEMO-KEY-2026"; // المفتاح السري المطلوب لعبور حماية السيرفر
+        const shadowTrapApi = "http://127.0.0.1:5000/api/alert"; 
+        
+        window.addEventListener('contextmenu', (e) => {
+            fetch(shadowTrapApi, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-API-Key': clientApiKey // إرسال المفتاح السري مع الطلب
+                },
+                body: JSON.stringify({ trap_id: trapId })
+            })
+            .then(response => console.log("ShadowTrap: Alert sent securely."))
+            .catch(error => console.error("ShadowTrap Error:", error));
+        });
+    })();
 </script>
 
 </body>
