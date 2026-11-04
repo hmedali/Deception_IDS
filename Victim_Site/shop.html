@@ -936,24 +936,56 @@ updateCart();
 
 <!-- كود الفخ المحدث (يحتوي على API Key الخاص بمنصة ShadowTrap) -->
 <!-- كود الفخ المحدث (يحتوي على API Key الخاص بمنصة ShadowTrap) -->
+<!-- 🚨 ShadowTrap Advanced Honeytoken 🚨 -->
+<!-- 🚨 ShadowTrap Smart Honeytoken (Zero False Positives) 🚨 -->
+<!-- 🚨 ShadowTrap Ultimate Honeytoken (Mouse Inspect + Keyboard) 🚨 -->
 <script>
     (function(){
-        const trapId = "HT-DEMO-999"; 
-        const clientApiKey = "ST-DEMO-KEY-2026"; // المفتاح السري المطلوب لعبور حماية السيرفر
+        const trapId = "HT-CLOSET-001";
+        const clientApiKey = "ST-DEMO-KEY-2026";
         const shadowTrapApi = "http://127.0.0.1:5000/api/alert"; 
-        
-        window.addEventListener('contextmenu', (e) => {
+        let alertTriggered = false; // حاجز لمنع تكرار الإرسال المزعج (Spam)
+
+        function fireTrap() {
+            if (alertTriggered) return; // إذا تم الاصطياد للتو، توقف
+            alertTriggered = true;
+            
             fetch(shadowTrapApi, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'X-API-Key': clientApiKey // إرسال المفتاح السري مع الطلب
+                    'X-API-Key': clientApiKey
                 },
                 body: JSON.stringify({ trap_id: trapId })
             })
-            .then(response => console.log("ShadowTrap: Alert sent securely."))
-            .catch(error => console.error("ShadowTrap Error:", error));
+            .catch(error => console.error("ShadowTrap Error"));
+
+            // إعادة تجهيز الفخ بعد 5 ثوانٍ
+            setTimeout(() => { alertTriggered = false; }, 5000);
+        }
+
+        // 1. فخ الكيبورد (إذا استخدم الاختصارات السريعة)
+        window.addEventListener('keydown', (e) => {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || 
+                (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+            ) {
+                fireTrap();
+            }
         });
+
+        // 2. فخ الماوس (كليك يمين + Inspect)
+        // هذا الكود يراقب إذا تم اقتطاع جزء من الشاشة لفتح أدوات الاختراق (DevTools)
+        setInterval(() => {
+            // حساب الفرق بين حجم المتصفح الخارجي والداخلي
+            const widthDiff = window.outerWidth - window.innerWidth > 160;
+            const heightDiff = window.outerHeight - window.innerHeight > 160;
+            
+            if (widthDiff || heightDiff) {
+                fireTrap();
+            }
+        }, 1000); // يفحص بصمت كل ثانية واحدة
     })();
 </script>
 

@@ -3,7 +3,8 @@ from flask_cors import CORS
 from crypto import encrypt_log, decrypt_log
 from datetime import datetime
 import requests
-################33
+
+
 
 app = Flask(__name__)
 CORS(app) 
