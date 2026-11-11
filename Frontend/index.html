@@ -4,130 +4,310 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShadowTrap | Adaptive IDS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>ShadowTrap | Advanced SOC</title>
+    <!-- خطوط السايبر سكيورتي -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --primary: #3b82f6;
-            --danger: #ef4444;
-            --success: #10b981;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
+            --bg-base: #030712;
+            --bg-panel: rgba(17, 24, 39, 0.7);
+            --neon-blue: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff003c;
+            --text-main: #e2e8f0;
+            --text-muted: #64748b;
+            --border-glow: rgba(0, 240, 255, 0.2);
+            --font-cyber: 'Orbitron', sans-serif;
+            --font-tech: 'Rajdhani', sans-serif;
+            --font-code: 'Fira Code', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        body { 
+            background-color: var(--bg-base); 
+            color: var(--text-main); 
+            font-family: var(--font-tech);
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
 
-        /* Sidebar */
-        .sidebar { width: 280px; background-color: var(--card-bg); padding: 25px 20px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 10; }
-        .logo { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 50px; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; }
-        .nav-item { padding: 15px; margin-bottom: 12px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; color: var(--text-muted); display: flex; align-items: center; gap: 15px; font-weight: 600; }
-        .nav-item:hover { background-color: rgba(59, 130, 246, 0.1); color: var(--text-main); transform: translateX(5px); }
-        .nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transform: translateX(5px); }
+        /* Scanline Effect */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.3;
+        }
 
-        /* Main Content & Views */
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        /* Sidebar - Glassmorphism */
+        .sidebar { 
+            width: 280px; 
+            background: var(--bg-panel); 
+            backdrop-filter: blur(10px);
+            padding: 30px 20px; 
+            border-right: 1px solid var(--border-glow); 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 10;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+        }
+        .logo { 
+            font-family: var(--font-cyber);
+            font-size: 26px; 
+            font-weight: 900; 
+            color: var(--neon-blue); 
+            margin-bottom: 50px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        .nav-item { 
+            padding: 16px; 
+            margin-bottom: 15px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            color: var(--text-muted); 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            font-size: 17px;
+            font-weight: 600; 
+            border: 1px solid transparent;
+        }
+        .nav-item:hover { 
+            color: var(--neon-blue); 
+            border-color: var(--border-glow);
+            background: rgba(0, 240, 255, 0.05);
+            transform: translateX(5px); 
+        }
+        .nav-item.active { 
+            background: rgba(0, 240, 255, 0.1); 
+            color: var(--neon-blue); 
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            transform: translateX(5px); 
+        }
+
+        /* Main Content */
+        .main-content { 
+            flex: 1; 
+            padding: 40px; 
+            overflow-y: auto; 
+            position: relative; 
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-blue) var(--bg-base);
+        }
         .view-section { display: none; opacity: 0; transform: translateY(20px); transition: all 0.4s ease-in-out; }
         .view-section.active-view { display: block; opacity: 1; transform: translateY(0); }
 
         /* Header */
-        .header { margin-bottom: 40px; }
-        .header h2 { font-size: 28px; margin-bottom: 5px; font-weight: 800; letter-spacing: -0.5px; }
-        .header p { color: var(--text-muted); }
+        .header { margin-bottom: 40px; border-bottom: 1px solid var(--border-glow); padding-bottom: 15px; }
+        .header h2 { font-family: var(--font-cyber); font-size: 32px; color: #fff; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .header p { color: var(--neon-green); font-family: var(--font-code); font-size: 14px; margin-top: 5px; }
+        .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--neon-red); border-radius: 50%; box-shadow: 0 0 10px var(--neon-red); animation: pulse-red 1s infinite alternate; margin-right: 8px; }
 
-        /* Cards */
+        @keyframes pulse-red { from { opacity: 0.4; } to { opacity: 1; } }
+
+        /* Cyber Cards */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .stat-card { background-color: var(--card-bg); padding: 25px; border-radius: 12px; border-top: 4px solid var(--primary); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); transition: transform 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card.danger { border-top-color: var(--danger); }
-        .stat-card.success { border-top-color: var(--success); }
-        .stat-value { font-size: 36px; font-weight: 800; margin-top: 15px; }
-
-        /* Generator Section */
-        .generator-section { background-color: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
-        .btn-primary { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 10px; }
-        .btn-primary:hover { background-color: #2563eb; transform: scale(1.02); }
+        .stat-card { 
+            background: var(--bg-panel); 
+            backdrop-filter: blur(5px);
+            padding: 25px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-glow); 
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s; 
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 2px; background: var(--neon-blue);
+            animation: scanline 3s linear infinite;
+        }
+        @keyframes scanline { 0% { left: -100%; } 100% { left: 200%; } }
         
-        .code-box { background-color: #000; padding: 20px; border-radius: 8px; margin-top: 20px; color: #34d399; font-family: 'Courier New', Courier, monospace; position: relative; display: none; line-height: 1.6; font-size: 14px; overflow-x: auto; border: 1px solid var(--border-color); }
-        .copy-btn { position: absolute; top: 15px; right: 15px; background: #334155; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.3s; }
-        .copy-btn:hover { background: #475569; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 240, 255, 0.15); border-color: var(--neon-blue); }
+        .stat-card.danger::before { background: var(--neon-red); }
+        .stat-card.danger:hover { box-shadow: 0 10px 30px rgba(255, 0, 60, 0.15); border-color: var(--neon-red); }
+        .stat-card.success::before { background: var(--neon-green); }
+        
+        .stat-label { color: var(--text-muted); font-family: var(--font-code); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+        .stat-value { font-family: var(--font-cyber); font-size: 42px; font-weight: 700; margin-top: 15px; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
 
-        /* Logs Table */
-        .logs-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .logs-table th, .logs-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .logs-table th { background-color: rgba(255,255,255,0.05); color: var(--text-muted); font-weight: 600; }
-        .logs-table tr:hover { background-color: rgba(255,255,255,0.02); }
-        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .badge.high { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        /* Panels & Generators */
+        .generator-section { 
+            background: var(--bg-panel); 
+            padding: 30px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3); 
+        }
+        .generator-section h3 { font-family: var(--font-cyber); font-size: 20px; margin-bottom: 20px; color: #fff; }
+        
+        .btn-primary { 
+            background: transparent; 
+            color: var(--neon-blue); 
+            border: 1px solid var(--neon-blue); 
+            padding: 12px 25px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-family: var(--font-code);
+            font-weight: 600; 
+            transition: all 0.3s; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 10px;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1) inset;
+        }
+        .btn-primary:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
+        
+        .code-box { 
+            background: #000; 
+            padding: 25px 20px; 
+            border-radius: 6px; 
+            margin-top: 25px; 
+            color: var(--neon-green); 
+            font-family: var(--font-code); 
+            display: none; 
+            line-height: 1.7; 
+            font-size: 14px; 
+            border: 1px solid #1f2937; 
+            position: relative;
+        }
+        .copy-btn { position: absolute; top: 10px; right: 10px; background: #1f2937; color: #fff; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-family: var(--font-code); transition: 0.3s; font-size: 12px; }
+        .copy-btn:hover { background: var(--neon-blue); color: #000; }
+
+        /* Cyber Table */
+        .logs-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-family: var(--font-tech); font-size: 16px; }
+        .logs-table th, .logs-table td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .logs-table th { background: rgba(0, 240, 255, 0.05); color: var(--neon-blue); font-family: var(--font-cyber); font-size: 13px; letter-spacing: 1px; }
+        .logs-table tr { transition: 0.2s; }
+        .logs-table tr:hover { background: rgba(0, 240, 255, 0.05); }
+        
+        .badge { padding: 6px 12px; border-radius: 4px; font-size: 12px; font-family: var(--font-code); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .badge.high { background: rgba(255, 0, 60, 0.1); color: var(--neon-red); border: 1px solid var(--neon-red); box-shadow: 0 0 10px rgba(255, 0, 60, 0.2); }
+        .badge.info { background: rgba(0, 240, 255, 0.1); color: var(--neon-blue); border: 1px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+        .badge.scan { background: rgba(57, 255, 20, 0.1); color: var(--neon-green); border: 1px solid var(--neon-green); box-shadow: 0 0 10px rgba(57, 255, 20, 0.2); }
 
         /* Toast Notifications */
-        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background-color: var(--card-bg); border-left: 4px solid var(--primary); padding: 15px 25px; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: #fff; font-weight: 600; display: flex; align-items: center; gap: 15px; animation: slideInRight 0.4s ease-out forwards; }
-        .toast.success { border-left-color: var(--success); }
-        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 15px; }
+        .toast { 
+            background: rgba(17, 24, 39, 0.95); 
+            border: 1px solid var(--neon-blue); 
+            padding: 18px 25px; 
+            border-radius: 6px; 
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); 
+            color: #fff; 
+            font-family: var(--font-tech);
+            font-size: 16px;
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        }
+        .toast i { font-size: 20px; }
+        .toast.success { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(57, 255, 20, 0.3); }
+        .toast.success i { color: var(--neon-green); }
+        .toast.danger { border-color: var(--neon-red); box-shadow: 0 0 20px rgba(255, 0, 60, 0.3); }
+        .toast.danger i { color: var(--neon-red); }
+        
+        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="logo"><i class="fa-solid fa-shield-halved"></i> ShadowTrap</div>
-        <div class="nav-item active" data-target="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</div>
-        <div class="nav-item" data-target="traps"><i class="fa-solid fa-spider"></i> Trap Management</div>
-        <div class="nav-item" data-target="logs"><i class="fa-solid fa-file-shield"></i> Security Logs</div>
-        <div class="nav-item" data-target="settings"><i class="fa-solid fa-gear"></i> Settings</div>
+        <div class="logo"><i class="fa-solid fa-shield-virus"></i> SHADOWTRAP</div>
+        <div class="nav-item active" data-target="dashboard"><i class="fa-solid fa-radar"></i> Threat Radar</div>
+        <div class="nav-item" data-target="traps"><i class="fa-solid fa-spider"></i> Deception Nodes</div>
+        <div class="nav-item" data-target="logs"><i class="fa-solid fa-terminal"></i> System Terminal</div>
+        <div class="nav-item" data-target="settings"><i class="fa-solid fa-microchip"></i> Config</div>
     </aside>
 
     <main class="main-content">
         <!-- Dashboard View -->
         <section id="dashboard" class="view-section active-view">
             <div class="header">
-                <h2>System Overview</h2>
-                <p>Welcome, Security Administrator</p>
+                <h2>COMMAND CENTER</h2>
+                <p><span class="live-dot"></span> LIVE THREAT MONITORING DETECTED [SYS.ADMIN]</p>
             </div>
+            
             <div class="stats-grid">
-                <div class="generator-section" style="margin-top: 20px;">
-    <h3><i class="fa-solid fa-earth-americas"></i> Attacks by Country</h3>
-    <canvas id="geoChart" height="80"></canvas>
-</div>
                 <div class="stat-card success">
-                    <div style="color: var(--text-muted);">Active Honeytokens</div>
-                    <div class="stat-value" id="active-traps">12</div>
+                    <div class="stat-label">Active Honeytokens</div>
+                    <div class="stat-value" id="active-traps">6</div>
                 </div>
                 <div class="stat-card danger">
-                    <div style="color: var(--text-muted);">Attacks Detected Today</div>
-                    <div class="stat-value" id="daily-attacks">3</div>
+                    <div class="stat-label">Critical Incidents</div>
+                    <div class="stat-value" id="daily-attacks" style="color: var(--neon-red);">0</div>
                 </div>
                 <div class="stat-card">
-                    <div style="color: var(--text-muted);">Encryption Status</div>
-                    <div class="stat-value" style="color: var(--success); font-size: 24px; margin-top:20px;">
-                        <i class="fa-solid fa-lock"></i> AES-128 GCM Secured
+                    <div class="stat-label">Encryption Protocol</div>
+                    <div class="stat-value" style="color: var(--neon-blue); font-size: 26px; margin-top:25px;">
+                        <i class="fa-solid fa-lock"></i> AES-128 GCM
                     </div>
                 </div>
+            </div>
+
+            <!-- Attacks by Country Chart -->
+            <div class="generator-section" style="margin-top: 20px; margin-bottom: 40px;">
+                <h3><i class="fa-solid fa-globe-crosshairs"></i> GLOBAL THREAT ORIGINS</h3>
+                <canvas id="geoChart" height="80"></canvas>
+            </div>
+            
+             <!-- Logs Table -->
+             <div class="generator-section" style="overflow-x: auto;">
+                <h3><i class="fa-solid fa-satellite-dish"></i> REAL-TIME INTERCEPTS</h3>
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>TIME (UTC)</th>
+                            <th>TRAP SIGNATURE</th>
+                            <th>VECTOR</th>
+                            <th>SOURCE IP</th>
+                            <th>GEO LOCATION</th>
+                            <th>SEVERITY</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-body">
+                        <!-- Logs will be populated here by script.js -->
+                    </tbody>
+                </table>
             </div>
         </section>
 
         <!-- Traps Management View -->
         <section id="traps" class="view-section">
             <div class="header">
-                <h2>Trap Management</h2>
-                <p>Generate and deploy adaptive honeytokens to victim sites.</p>
+                <h2>DECEPTION NODES</h2>
+                <p>Initialize and deploy active cyber-traps into the wild.</p>
             </div>
             <div class="generator-section">
-                <h3><i class="fa-solid fa-code"></i> Generate New Tracker (JS Snippet)</h3>
-                <p style="color: var(--text-muted); margin: 10px 0 25px 0;">
-                    Generate the unique payload and inject it into the `<head>` or `<body>` of the client's website.
+                <h3><i class="fa-solid fa-file-code"></i> COMPILE JAVASCRIPT PAYLOAD</h3>
+                <p style="color: var(--text-muted); margin: 10px 0 25px 0; font-family: var(--font-code);">
+                    > Ready to compile adaptive Honeytoken module for deployment...
                 </p>
                 <button class="btn-primary" id="generate-btn">
-                    <i class="fa-solid fa-bolt"></i> Generate Payload
+                    <i class="fa-solid fa-bolt"></i> COMPILE PAYLOAD
                 </button>
                 <div class="code-box" id="snippet-box">
-                    <button class="copy-btn" id="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button>
+                    <button class="copy-btn" id="copy-btn"><i class="fa-solid fa-copy"></i> COPY TO CLIPBOARD</button>
                     <code id="generated-code"></code>
                 </div>
             </div>
@@ -136,46 +316,26 @@
         <!-- Security Logs View -->
         <section id="logs" class="view-section">
             <div class="header">
-                <h2>Security Logs</h2>
-                <p>Encrypted intrusion attempts and detected anomalies.</p>
+                <h2>SYSTEM TERMINAL</h2>
+                <p>Encrypted vault data. Switch to Threat Radar for live view.</p>
             </div>
-            <div class="generator-section" style="overflow-x: auto;">
-                <table class="logs-table">
-                    <thead>
-                        <tr>
-                            <th>Timestamp</th>
-                            <th>Trap ID</th>
-                            <th>Attacker IP</th>
-                            <th>Severity</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logs-body">
-                        <tr>
-                            <td>2026-10-31 14:22:01</td>
-                            <td>HT-WGB3K8O2I</td>
-                            <td>192.168.1.45</td>
-                            <td><span class="badge high">High (Inspect)</span></td>
-                            <td><button style="background:transparent; border:none; color:var(--primary); cursor:pointer;"><i class="fa-solid fa-eye"></i> View Details</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="generator-section">
+                <p style="color: var(--neon-green); font-family: var(--font-code);">[ root@shadowtrap ]# Tail -f /var/log/secure ... (Redirected to Dashboard UI)</p>
             </div>
         </section>
 
         <!-- Settings View -->
         <section id="settings" class="view-section">
             <div class="header">
-                <h2>System Settings</h2>
-                <p>Configure API endpoints and encryption keys.</p>
+                <h2>SYSTEM CONFIG</h2>
+                <p>Core infrastructure settings and API management.</p>
             </div>
             <div class="generator-section">
-                <p style="color: var(--text-muted);">Settings configuration will be available in V1.0</p>
+                <p style="color: var(--text-muted); font-family: var(--font-code);">[INFO] Database scaling to PostgreSQL is scheduled for v2.0 deployment.</p>
             </div>
         </section>
     </main>
 
-    <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
 
     <script src="script.js"></script>

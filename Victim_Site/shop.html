@@ -938,16 +938,19 @@ updateCart();
 <!-- كود الفخ المحدث (يحتوي على API Key الخاص بمنصة ShadowTrap) -->
 <!-- 🚨 ShadowTrap Advanced Honeytoken 🚨 -->
 <!-- 🚨 ShadowTrap Smart Honeytoken (Zero False Positives) 🚨 -->
-<!-- 🚨 ShadowTrap Ultimate Honeytoken (Mouse Inspect + Keyboard) 🚨 -->
+<!-- زر مخفي لا يراه المستخدم العادي (فخ لبرامج الفحص الآلي) -->
+<a href="/admin-dashboard-login" id="hidden-admin-link" style="display:none;" aria-hidden="true">Admin Login</a>
+
+<!-- 🚨 ShadowTrap Ultimate Honeytoken v2 🚨 -->
 <script>
     (function(){
-        const trapId = "HT-CLOSET-001";
-        const clientApiKey = "ST-DEMO-KEY-2026";
+        const clientApiKey = "ST-DEMO-KEY-2026"; // المفتاح السري
         const shadowTrapApi = "http://127.0.0.1:5000/api/alert"; 
-        let alertTriggered = false; // حاجز لمنع تكرار الإرسال المزعج (Spam)
+        let alertTriggered = false; 
 
-        function fireTrap() {
-            if (alertTriggered) return; // إذا تم الاصطياد للتو، توقف
+        // دالة الإرسال الذكية (تستقبل معرّف الفخ حسب نوع الهجمة)
+        function fireTrap(trapId) {
+            if (alertTriggered) return; 
             alertTriggered = true;
             
             fetch(shadowTrapApi, {
@@ -956,36 +959,63 @@ updateCart();
                     'Content-Type': 'application/json',
                     'X-API-Key': clientApiKey
                 },
-                body: JSON.stringify({ trap_id: trapId })
+                body: JSON.stringify({ trap_id: trapId }) // إرسال اسم الفخ اللي صاد الهاكر
             })
             .catch(error => console.error("ShadowTrap Error"));
 
-            // إعادة تجهيز الفخ بعد 5 ثوانٍ
             setTimeout(() => { alertTriggered = false; }, 5000);
         }
 
-        // 1. فخ الكيبورد (إذا استخدم الاختصارات السريعة)
+        // ----------------------------------------------------
+        // 1. فخ اختصارات الكيبورد (F12, Inspect, View Source)
+        // ----------------------------------------------------
         window.addEventListener('keydown', (e) => {
             if (
                 e.key === 'F12' || 
                 (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || 
                 (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
             ) {
-                fireTrap();
+                fireTrap("HT-KEYBOARD-SCAN"); // الهاكر استخدم الكيبورد
             }
         });
 
-        // 2. فخ الماوس (كليك يمين + Inspect)
-        // هذا الكود يراقب إذا تم اقتطاع جزء من الشاشة لفتح أدوات الاختراق (DevTools)
+        // ----------------------------------------------------
+        // 2. فخ تغير أبعاد الشاشة (DevTools Detection)
+        // ----------------------------------------------------
         setInterval(() => {
-            // حساب الفرق بين حجم المتصفح الخارجي والداخلي
             const widthDiff = window.outerWidth - window.innerWidth > 160;
             const heightDiff = window.outerHeight - window.innerHeight > 160;
-            
             if (widthDiff || heightDiff) {
-                fireTrap();
+                fireTrap("HT-DEVTOOLS-OPENED"); // الهاكر فتح أدوات المطور بالماوس
             }
-        }, 1000); // يفحص بصمت كل ثانية واحدة
+        }, 1000);
+
+        // ----------------------------------------------------
+        // 3. فخ الرابط المخفي (Hidden Endpoint Trap)
+        // ----------------------------------------------------
+        const hiddenLink = document.getElementById('hidden-admin-link');
+        if (hiddenLink) {
+            hiddenLink.addEventListener('click', (e) => {
+                e.preventDefault(); // نمنعه من الانتقال للصفحة الوهمية
+                fireTrap("HT-HIDDEN-LINK-CLICK"); // برامج الهاكر ضغطت على رابط مخفي
+            });
+        }
+
+        // ----------------------------------------------------
+        // 4. فخ سرقة الجلسات (LocalStorage Token Theft)
+        // ----------------------------------------------------
+        // نزرع بيانات دخول وهمية في متصفح الزائر
+        localStorage.setItem('admin_auth_token', 'super_secret_admin_token_998877');
+        
+        // نراقب أي محاولة لسرقة أو قراءة هذا التوكن الوهمي
+        const originalGetItem = localStorage.getItem;
+        localStorage.getItem = function(key) {
+            if (key === 'admin_auth_token') {
+                fireTrap("HT-TOKEN-THEFT"); // الهاكر حاول يسرق التوكن!
+            }
+            return originalGetItem.apply(this, arguments);
+        };
+
     })();
 </script>
 
