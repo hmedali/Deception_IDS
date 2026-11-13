@@ -1018,6 +1018,76 @@ updateCart();
 
     })();
 </script>
+<div style="display:none;">
+        <!-- 1. فخ ملف النسخة الاحتياطية -->
+        <a href="#" id="ht-fake-backup">database_backup_2026.zip</a>
+        
+        <!-- 2. فخ لوحة تحكم المدير الوهمية -->
+        <form id="ht-fake-admin">
+            <input type="text" name="username" value="admin">
+            <input type="password" name="password" value="">
+            <button type="submit">Login as Admin</button>
+        </form>
 
+        <!-- 3. فخ المفتاح المسرب (مخفي كتعليق) -->
+        <!-- DEV NOTE: DO NOT DELETE THIS AWS KEY -> AKIA-SECRET-ADMIN-KEY-9988 -->
+        <p id="ht-leaked-key">AKIA-SECRET-ADMIN-KEY-9988</p>
+    </div>
+
+    <script>
+        (function(){
+            const targetSite = "متجر الملابس (E-Commerce)"; 
+            const clientApiKey = "ST-DEMO-KEY-2026";
+            const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
+            let triggeredTraps = new Set(); // حتى الفخ يضرب مرة وحدة وما يزعجنا
+
+            function fireTrap(trapType) {
+                if (triggeredTraps.has(trapType)) return;
+                triggeredTraps.add(trapType);
+                
+                console.warn("🚨 ShadowTrap: " + trapType + " Triggered!");
+                fetch(shadowTrapApi, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-API-Key': clientApiKey },
+                    body: JSON.stringify({ target_site: targetSite, honeytoken_type: trapType })
+                }).catch(err => console.error(err));
+            }
+
+            // --- 1. فخ الباك أب (إذا الهاكر أظهر الرابط وضغط عليه) ---
+            document.getElementById('ht-fake-backup').addEventListener('click', (e) => {
+                e.preventDefault();
+                fireTrap("محاولة تحميل ملف النسخة الاحتياطية (Backup)");
+                alert("Error 403: Access Denied. Incident Logged."); 
+            });
+
+            // --- 2. فخ لوحة المدير (إذا الهاكر أظهر الفورم وحاول يسجل دخول) ---
+            document.getElementById('ht-fake-admin').addEventListener('submit', (e) => {
+                e.preventDefault();
+                fireTrap("محاولة اختراق لوحة تحكم المدير (Admin Portal)");
+                alert("Invalid Admin Credentials. IP Logged.");
+            });
+
+            // --- 3. فخ المفتاح المسرب (إذا الهاكر حدد المفتاح ونسخه CTRL+C) ---
+            document.addEventListener('copy', (e) => {
+                const copiedText = document.getSelection().toString();
+                if (copiedText.includes("AKIA-SECRET-ADMIN-KEY")) {
+                    fireTrap("سرقة مفتاح API مسرب (Leaked Key)");
+                }
+            });
+
+            // --- 4. فخ الكوكيز المسمومة (Session Hijacking) ---
+            // نزرع كوكي وهمي بصلاحية مستخدم عادي أول ما يفتح الموقع
+            document.cookie = "admin_session=guest; path=/";
+            
+            // نراقب الكوكيز، إذا الهاكر غيرها إلى admin حتى يصعد صلاحياته... نصيده!
+            setInterval(() => {
+                if (document.cookie.includes("admin_session=admin") || document.cookie.includes("admin_session=true")) {
+                    fireTrap("تلاعب بالكوكيز (Session Hijacking)");
+                    document.cookie = "admin_session=guest; path=/"; // نرجعه عادي حتى لا يعلق الإنذار
+                }
+            }, 2000);
+            
+        })();
+    </script>
 </body>
 </html>

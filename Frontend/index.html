@@ -123,7 +123,7 @@
         @keyframes pulse-red { from { opacity: 0.4; } to { opacity: 1; } }
 
         /* Cyber Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
         .stat-card { 
             background: var(--bg-panel); 
             backdrop-filter: blur(5px);
@@ -146,7 +146,7 @@
         .stat-card.success::before { background: var(--neon-green); }
         
         .stat-label { color: var(--text-muted); font-family: var(--font-code); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
-        .stat-value { font-family: var(--font-cyber); font-size: 42px; font-weight: 700; margin-top: 15px; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .stat-value { font-family: var(--font-cyber); font-size: 38px; font-weight: 700; margin-top: 15px; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
 
         /* Panels & Generators */
         .generator-section { 
@@ -257,11 +257,14 @@
                     <div class="stat-label">Critical Incidents</div>
                     <div class="stat-value" id="daily-attacks" style="color: var(--neon-red);">0</div>
                 </div>
+                <!-- عدادات الأكشن الوهمية (تعديل 4) -->
                 <div class="stat-card">
-                    <div class="stat-label">Encryption Protocol</div>
-                    <div class="stat-value" style="color: var(--neon-blue); font-size: 26px; margin-top:25px;">
-                        <i class="fa-solid fa-lock"></i> AES-128 GCM
-                    </div>
+                    <div class="stat-label">Server CPU Load</div>
+                    <div class="stat-value" id="cpu-load" style="color: var(--neon-green);">12%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Memory Usage</div>
+                    <div class="stat-value" id="ram-usage" style="color: var(--neon-blue);">2.1 GB</div>
                 </div>
             </div>
 
@@ -273,13 +276,18 @@
             
              <!-- Logs Table -->
              <div class="generator-section" style="overflow-x: auto;">
-                <h3><i class="fa-solid fa-satellite-dish"></i> REAL-TIME INTERCEPTS</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3><i class="fa-solid fa-satellite-dish"></i> REAL-TIME INTERCEPTS</h3>
+                    <button id="export-btn" class="btn-primary" style="padding: 8px 15px; font-size: 14px;">
+                        <i class="fa-solid fa-download"></i> EXPORT FORENSICS (CSV)
+                    </button>
+                </div>
                 <table class="logs-table">
                     <thead>
                         <tr>
                             <th>TIME (UTC)</th>
-                            <th>TRAP SIGNATURE</th>
-                            <th>VECTOR</th>
+                            <th>TARGET SITE</th>
+                            <th>HONEYTOKEN TYPE</th>
                             <th>SOURCE IP</th>
                             <th>GEO LOCATION</th>
                             <th>SEVERITY</th>
@@ -314,13 +322,53 @@
         </section>
 
         <!-- Security Logs  View -->
+        <!-- Security Logs View (Terminal الحقيقي) -->
         <section id="logs" class="view-section">
             <div class="header">
                 <h2>SYSTEM TERMINAL</h2>
-                <p>Encrypted vault data. Switch to Threat Radar for live view.</p>
+                <p>Live Raw Data Stream & Forensic Logging.</p>
             </div>
-            <div class="generator-section">
-                <p style="color: var(--neon-green); font-family: var(--font-code);">[ root@shadowtrap ]# Tail -f /var/log/secure ... (Redirected to Dashboard UI)</p>
+            <div class="generator-section" style="background: #000; border: 1px solid var(--neon-green); padding: 15px;">
+                <div id="terminal-output" style="height: 400px; overflow-y: auto; font-family: var(--font-code); color: var(--neon-green); font-size: 14px; line-height: 1.6;">
+                    <!-- السجلات راح تنزل هنا برمجياً -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings View (لوحة التحكم الاستعراضية) -->
+        <section id="settings" class="view-section">
+            <div class="header">
+                <h2>SYSTEM CONFIG</h2>
+                <p>Core infrastructure settings and Active Defense parameters.</p>
+            </div>
+            <div class="stats-grid">
+                <!-- كارد الدفاع النشط -->
+                <div class="stat-card">
+                    <h3 style="color: var(--neon-blue); margin-bottom: 15px; font-family: var(--font-cyber); font-size: 18px;"><i class="fa-solid fa-shield-halved"></i> Active Defense</h3>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+                        <span>Auto-Block Malicious IPs</span>
+                        <input type="checkbox" checked onchange="showToast('Firewall rules updated: Auto-Block ON', 'success')" style="cursor: pointer; width: 20px; height: 20px; accent-color: var(--neon-red);">
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+                        <span>Deep Packet Inspection (DPI)</span>
+                        <input type="checkbox" onchange="showToast('DPI Module status changed', 'success')" style="cursor: pointer; width: 20px; height: 20px; accent-color: var(--neon-blue);">
+                    </div>
+                </div>
+
+                <!-- كارد النظام والاتصال -->
+                <div class="stat-card">
+                    <h3 style="color: var(--neon-green); margin-bottom: 15px; font-family: var(--font-cyber); font-size: 18px;"><i class="fa-solid fa-network-wired"></i> Network & Data</h3>
+                    
+                    <button class="btn-primary" onclick="showToast('Initializing Ngrok Tunnel... Waiting for connection', 'info')" style="width: 100%; justify-content: center; margin-bottom:15px; font-size: 14px;">
+                        <i class="fa-solid fa-globe"></i> START NGROK TUNNEL
+                    </button>
+                    
+                    <button class="btn-primary" onclick="showToast('Database successfully backed up to /var/backups/', 'success')" style="width: 100%; justify-content: center; border-color: var(--text-muted); color: var(--text-muted); font-size: 14px;">
+                        <i class="fa-solid fa-database"></i> BACKUP SQLITE DB
+                    </button>
+                </div>
             </div>
         </section>
 

@@ -1,59 +1,32 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الموظفين - الضحية الثانية</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
-        .header { background-color: #2c3e50; color: white; padding: 20px; text-align: center; }
-        .container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; text-align: center; }
-        .login-box { margin-top: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #e74c3c; color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; width: 100%; transition: 0.3s;}
-        button:hover { background-color: #c0392b; }
-        .warning { text-align: center; font-size: 12px; color: #7f8c8d; margin-top: 20px; }
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        <h1>نظام إدارة شركة التقنية</h1>
-    </div>
-
-    <div class="container">
-        <h2>تسجيل الدخول الإداري</h2>
-        <p style="text-align: center; color: #34495e;">هذه البوابة مخصصة للموظفين المصرح لهم فقط.</p>
-        
-        <div class="login-box">
-            <input type="text" placeholder="اسم المستخدم (Admin)">
-            <input type="password" placeholder="كلمة المرور">
-            <button>دخول للنظام</button>
-        </div>
-
-        <p class="warning">أي محاولة اختراق سيتم تسجيلها والإبلاغ عنها!</p>
-    </div>
-
-    <!-- 🚨 الصق كود الفخ (Payload) الثاني الخاص بهذا الموقع هنا 🚨 -->
-    <!-- ShadowTrap Adaptive Honeytoken -->
-<!-- 🚨 ShadowTrap Smart Honeytoken (Zero False Positives) 🚨 -->
+<!-- 🚨 ShadowTrap Smart Honeytoken (V2.0) 🚨 -->
 <script>
     (function(){
-        const trapId = "HT-NAFRQXHDN";
+        // 🔴 هنا التعديل الجديد: فصلنا الموقع عن نوع الفخ
+        const targetSite = "بوابة الشركة (Company Portal)"; 
+        const honeytokenType = "فتح أدوات المطور (F12/Inspect)";
+        
         const clientApiKey = "ST-DEMO-KEY-2026";
-        const shadowTrapApi = "http://localhost:5000/api/alert";
+        const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
         let alertTriggered = false;
 
         function fireTrap() {
             if (alertTriggered) return;
             alertTriggered = true;
             console.warn("ShadowTrap: Suspicious activity detected.");
+            
+            // 🔴 إرسال البيانات المفصلة للسيرفر
             fetch(shadowTrapApi, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-API-Key': clientApiKey },
-                body: JSON.stringify({ trap_id: trapId })
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'X-API-Key': clientApiKey 
+                },
+                body: JSON.stringify({ 
+                    target_site: targetSite, 
+                    honeytoken_type: honeytokenType 
+                })
             }).catch(err => console.error(err));
+            
             setTimeout(() => { alertTriggered = false; }, 5000);
         }
 
@@ -64,7 +37,7 @@
             }
         });
 
-        // فخ الماوس (مراقبة أبعاد الشاشة عند فتح أدوات المطور)
+        // فخ الماوس
         setInterval(() => {
             if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
                 fireTrap();
@@ -72,6 +45,3 @@
         }, 1000);
     })();
 </script>
-
-</body>
-</html>

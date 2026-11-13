@@ -1,180 +1,92 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from crypto import encrypt_log, decrypt_log
-from datetime import datetime
-import requests
-
-
-
+import sqlite3
+import datetime
 
 app = Flask(__name__)
-CORS(app) 
+CORS(app) # للسماح باستقبال الهجمات من المواقع الخارجية
 
-db_logs = []
+# ---------------------------------------------------------
+# 1. إعداد قاعدة البيانات (تعديل رقم 3)
+# ---------------------------------------------------------
+DB_NAME = "shadowtrap.db"
 
-# --- الخطوة 4: قاعدة بيانات العملاء المصرح لهم (SaaS API Keys) ---
-VALID_API_KEYS = {
-    "ST-DEMO-KEY-2026": "موقع متجر الأناقة (الضحية التجريبي)"
-}
+def init_db():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    # إنشاء جدول الهجمات مع فصل الموقع عن نوع الفخ (تعديل رقم 1)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS attacks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            target_site TEXT,
+            honeytoken_type TEXT,
+            hacker_ip TEXT,
+            timestamp TEXT,
+            details TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-def get_geo_info(ip_address):
-    if ip_address == '127.0.0.1':
-        return {"country": "Localhost", "city": "Local Device", "isp": "None"}
-    try:
-        response = requests.get(f'http://ip-api.com/json/{ip_address}').json()
-        if response['status'] == 'success':
-            return {
-                "country": response.get('country', 'Unknown'),
-                "city": response.get('city', 'Unknown'),
-                "isp": response.get('isp', 'Unknown')
-            }
-    except:
-        pass
-    return {"country": "Unknown", "city": "Unknown", "isp": "Unknown"}
+# تشغيل دالة بناء قاعدة البيانات عند بدء السيرفر
+init_db()
 
+# ---------------------------------------------------------
+# 2. واجهة استقبال الهجمات (API)
+# ---------------------------------------------------------
 @app.route('/api/alert', methods=['POST'])
 def receive_alert():
-    # التحقق من الجدار الأمني (API Key Validation)
-    api_key = request.headers.get('X-API-Key')
-    if not api_key or api_key not in VALID_API_KEYS:
-        print(f"\n[❌ BLOCKED] Unauthorized attempt from IP: {request.remote_addr}")
-        return jsonify({"error": "Unauthorized! Invalid API Key."}), 403
-
     data = request.json
-    if not data:
-        return jsonify({"error": "No payload data"}), 400
-
-    attacker_ip = request.remote_addr
-    geo_info = get_geo_info(attacker_ip)
-
-    log_entry = {
-        "trap_id": data.get("trap_id", "Unknown"),
-        "client_name": VALID_API_KEYS[api_key], # تسجيل اسم العميل المستهدف
-        "attacker_ip": attacker_ip,
-        "country": geo_info["country"],
-        "city": geo_info["city"],
-        "isp": geo_info["isp"],
-        "user_agent": request.headers.get('User-Agent'),
-        "timestamp": datetime.now().isoformat()
-    }
-
-    encrypted_log = encrypt_log(log_entry)
-    db_logs.append({
-        "trap_id": log_entry["trap_id"],
-        "encrypted_data": encrypted_log
-    })
-
-    print(f"\n[🚨 ShadowTrap ALERT] Intrusion detected at {VALID_API_KEYS[api_key]}!")
-    print(f"Origin: {geo_info['country']} - {geo_info['city']}")
     
-    return jsonify({"status": "success"}), 200
+    # التحقق من المفتاح السري (لضمان أن التنبيه من موقعنا)
+    api_key = request.headers.get('X-API-Key')
+    if api_key != "ST-DEMO-KEY-2026":
+        return jsonify({"status": "error", "message": "Unauthorized"}), 403
 
-# --- فخ الـ .env (لاصطياد برامج الفحص الآلي) ---
-@app.route('/.env', methods=['GET'])
-def fake_env_trap():
-    attacker_ip = request.remote_addr
-    geo_info = get_geo_info(attacker_ip)
-
-    # تجهيز سجل الهجمة
-    log_entry = {
-        "trap_id": "HT-BACKEND-ENV-SCAN",
-        "client_name": "ShadowTrap Server (Direct Attack)", # الهجوم هنا على سيرفركم مباشرة
-        "attacker_ip": attacker_ip,
-        "country": geo_info["country"],
-        "city": geo_info["city"],
-        "isp": geo_info["isp"],
-        "user_agent": request.headers.get('User-Agent'),
-        "timestamp": datetime.now().isoformat()
-    }
-
-    # تشفير السجل وحفظه
-    encrypted_log = encrypt_log(log_entry)
-    db_logs.append({
-        "trap_id": log_entry["trap_id"],
-        "encrypted_data": encrypted_log
-    })
-
-    print(f"\n[🚨 ShadowTrap ALERT] Automated Scanner detected looking for .env file!")
+    # استلام البيانات مفصلة
+    target_site = data.get('target_site', 'Unknown Site')
+    honeytoken_type = data.get('honeytoken_type', 'Unknown Trap')
     
-    # الرد ببيانات داتا بيس وهمية حتى نعطل الهاكر ونخليه يضيع وقته بيها
-    fake_env_content = """
-    # Security Configuration
-    DB_HOST=127.0.0.1
-    DB_USER=root
-    DB_PASS=SuperSecret_Fake_Password_9988
-    API_KEY=ST-FAKE-KEY-0000
-    DEBUG=True
-    """
+    # سحب IP الهاكر (لو كان على سيرفر حقيقي، نستخدم request.remote_addr)
+    hacker_ip = request.remote_addr
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # حفظ الهجمة في قاعدة البيانات الدائمة
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO attacks (target_site, honeytoken_type, hacker_ip, timestamp, details)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (target_site, honeytoken_type, hacker_ip, timestamp, "Suspicious Activity Logged"))
+    conn.commit()
+    conn.close()
+
+    print(f"🚨 [ALERT] الهجوم على: {target_site} | نوع الفخ: {honeytoken_type} | من الـ IP: {hacker_ip}")
     
-    # نرجعله الملف على شكل نص (Text)
-    return fake_env_content, 200, {'Content-Type': 'text/plain'}
+    return jsonify({"status": "success", "message": "Trap triggered successfully!"}), 200
 
-# ========================================================
-# 🚨 فخ الروبوتات المسموم (Poisoned robots.txt) 🚨
-# ========================================================
-
-# الجزء الأول: الطُعم (ملف الروبوتات اللي راح يقراه الهاكر)
-@app.route('/robots.txt', methods=['GET'])
-def robots_txt():
-    # نكتبله تعليمات تمنع الدخول لمسار الداتا بيس، حتى نثير فضوله!
-    content = "User-agent: *\nDisallow: /api/v1/database-backup.sql\n"
-    return content, 200, {'Content-Type': 'text/plain'}
-
-# الجزء الثاني: المصيدة (الرابط اللي راح يركض عليه الهاكر)
-@app.route('/api/v1/database-backup.sql', methods=['GET'])
-def fake_sql_backup():
-    attacker_ip = request.remote_addr
-    geo_info = get_geo_info(attacker_ip)
-
-    # تجهيز سجل الهجمة
-    log_entry = {
-        "trap_id": "HT-ROBOTS-SQL-STEAL", # اسم الفخ اللي راح يظهر بالداشبورد
-        "client_name": "ShadowTrap Server",
-        "attacker_ip": attacker_ip,
-        "country": geo_info["country"],
-        "city": geo_info["city"],
-        "isp": geo_info["isp"],
-        "user_agent": request.headers.get('User-Agent'),
-        "timestamp": datetime.now().isoformat()
-    }
-
-    # تشفير السجل وحفظه
-    encrypted_log = encrypt_log(log_entry)
-    db_logs.append({
-        "trap_id": log_entry["trap_id"],
-        "encrypted_data": encrypted_log
-    })
-
-    print(f"\n[🚨 ShadowTrap ALERT] Hacker fell for the robots.txt trap!")
-    
-    # الرد بملف داتا بيس وهمي للتمويه وتضييع وقت الهاكر
-    fake_sql = """-- MySQL dump 10.13  Distrib 8.0.26, for Linux (x86_64)
--- Host: localhost    Database: shadowtrap_admin
--- ------------------------------------------------------
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) DEFAULT NULL,
-  `password_hash` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-);
-INSERT INTO `users` VALUES (1,'admin','e10adc3949ba59abbe56e057f20f883e');
--- Dump completed
-    """
-    
-    return fake_sql, 200, {'Content-Type': 'text/plain'}
-
+# ---------------------------------------------------------
+# 3. واجهة قراءة الهجمات (لعرضها في الداشبورد)
+# ---------------------------------------------------------
 @app.route('/api/logs', methods=['GET'])
 def get_logs():
-    decrypted_list = []
-    for entry in db_logs:
-        try:
-            clear_data = decrypt_log(entry["encrypted_data"])
-            decrypted_list.append(clear_data)
-        except Exception as e:
-            print(f"[Error] Decryption failed: {e}")
-    return jsonify(decrypted_list), 200
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('SELECT target_site, honeytoken_type, hacker_ip, timestamp FROM attacks ORDER BY id DESC')
+    rows = cursor.fetchall()
+    conn.close()
+
+    # تحويل البيانات إلى صيغة JSON للداشبورد
+    logs = []
+    for row in rows:
+        logs.append({
+            "target_site": row[0],
+            "honeytoken_type": row[1],
+            "hacker_ip": row[2],
+            "timestamp": row[3]
+        })
+    return jsonify(logs), 200
 
 if __name__ == '__main__':
-    print("🛡️ ShadowTrap API is Running with strict Key validation...")
-    app.run(debug=True, port=5000)
+    print("🚀 ShadowTrap Server V2.0 is Running...")
+    app.run(host='0.0.0.0', port=5000, debug=True)
