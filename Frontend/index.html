@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShadowTrap | Advanced SOC</title>
@@ -230,14 +229,16 @@
         
         @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
+    <link rel="stylesheet" href="effects.css">
 </head>
 <body>
+    <canvas id="bg-net"></canvas>
 
     <aside class="sidebar">
-        <div class="logo"><i class="fa-solid fa-shield-virus"></i> SHADOWTRAP</div>
-        <div class="nav-item active" data-target="dashboard"><i class="fa-solid fa-radar"></i> Threat Radar</div>
+        <div class="logo"><i class="fa-solid fa-shield-virus"></i>SHADOWTRAP</size></div>
+        <div class="nav-item active" data-target="dashboard"><i class="fa-solid fa-tower-broadcast"></i> Threat Radar</div>
         <div class="nav-item" data-target="traps"><i class="fa-solid fa-spider"></i> Deception Nodes</div>
-        <div class="nav-item" data-target="logs"><i class="fa-solid fa-terminal"></i> System Terminal</div>
+        <div class="nav-item" data-target="logs"><i class="fa-solid fa-terminal"></i> LIVE LOGS STREAM</div>
         <div class="nav-item" data-target="settings"><i class="fa-solid fa-microchip"></i> Config</div>
     </aside>
 
@@ -269,10 +270,11 @@
                 </div>
             </div>
 
-            <!-- Attacks by Country Chart -->
-            <div class="generator-section" style="margin-top: 20px; margin-bottom: 40px;">
-                <h3><i class="fa-solid fa-globe-crosshairs"></i> GLOBAL THREAT ORIGINS</h3>
-                <canvas id="geoChart" height="80"></canvas>
+            <div class="dash-row">
+                <div class="generator-section">
+                    <h3><i class="fa-solid fa-earth-americas"></i> GLOBAL THREAT ORIGINS</h3>
+                    <canvas id="geoChart" height="80"></canvas>
+                </div>
             </div>
             
              <!-- Logs Table -->
@@ -325,10 +327,7 @@
         <!-- Security Logs  View -->
         <!-- Security Logs View (Terminal الحقيقي) -->
         <section id="logs" class="view-section">
-            <div class="header">
-                <h2>SYSTEM TERMINAL</h2>
-                <p>Live Raw Data Stream & Forensic Logging.</p>
-            </div>
+            <div class="header"><h2>LIVE LOGS STREAM</h2><p><span class="live-dot"></span> TAILING /var/log/shadowtrap.log</p></div>
             <div class="generator-section" style="background: #000; border: 1px solid var(--neon-green); padding: 15px;">
                 <div id="terminal-output" style="height: 400px; overflow-y: auto; font-family: var(--font-code); color: var(--neon-green); font-size: 14px; line-height: 1.6;">
                     <!-- السجلات راح تنزل هنا برمجياً -->
@@ -362,10 +361,6 @@
                 <div class="stat-card">
                     <h3 style="color: var(--neon-green); margin-bottom: 15px; font-family: var(--font-cyber); font-size: 18px;"><i class="fa-solid fa-network-wired"></i> Network & Data</h3>
                     
-                    <button class="btn-primary" onclick="showToast('Initializing Ngrok Tunnel... Waiting for connection', 'info')" style="width: 100%; justify-content: center; margin-bottom:15px; font-size: 14px;">
-                        <i class="fa-solid fa-globe"></i> START NGROK TUNNEL
-                    </button>
-                    
                     <button class="btn-primary" onclick="showToast('Database successfully backed up to /var/backups/', 'success')" style="width: 100%; justify-content: center; border-color: var(--text-muted); color: var(--text-muted); font-size: 14px;">
                         <i class="fa-solid fa-database"></i> BACKUP SQLITE DB
                     </button>
@@ -373,20 +368,11 @@
             </div>
         </section>
 
-        <!-- Settings View -->
-        <section id="settings" class="view-section">
-            <div class="header">
-                <h2>SYSTEM CONFIG</h2>
-                <p>Core infrastructure settings and API management.</p>
-            </div>
-            <div class="generator-section">
-                <p style="color: var(--text-muted); font-family: var(--font-code);">[INFO] Database scaling to PostgreSQL is scheduled for v2.0 deployment.</p>
-            </div>
-        </section>
     </main>
 
     <div id="toast-container"></div>
 
     <script src="script.js"></script>
+    <script src="effects.js"></script>
 </body>
 </html>

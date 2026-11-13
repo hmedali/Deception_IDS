@@ -1,0 +1,98 @@
+/* ===== ShadowTrap motion layer ===== */
+body::after{position:fixed}
+#bg-net{position:fixed;inset:0;z-index:0;pointer-events:none}
+.sidebar{position:relative}.main-content{z-index:1}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateX(40px)}}
+
+/* boot sequence */
+#boot{position:fixed;inset:0;z-index:10000;background:#020509;display:grid;place-items:center;transition:opacity .7s,transform .7s}
+#boot.done{opacity:0;transform:scale(1.06);pointer-events:none}
+.boot-term{width:min(560px,88vw);font-family:var(--font-code);color:var(--neon-green);font-size:14px}
+.boot-term pre{min-height:170px;line-height:1.7;white-space:pre-wrap;text-shadow:0 0 8px rgba(57,255,20,.5)}
+.boot-bar{height:3px;background:#0f1a2a;margin-top:16px}
+.boot-bar i{display:block;height:100%;width:0;background:var(--neon-blue);box-shadow:0 0 12px var(--neon-blue);transition:width .25s}
+
+/* orchestrated reveal after boot */
+body:not(.ready) .sidebar,body:not(.ready) .main-content{opacity:0}
+.ready .sidebar{animation:slideSide .7s cubic-bezier(.2,.8,.2,1) both}
+.ready .nav-item{animation:slideSide .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.25s + var(--i,0)*.08s)}
+.ready .main-content{animation:fadeIn .8s .2s both}
+.ready #dashboard .stat-card{animation:rise .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.35s + var(--i,0)*.1s)}
+@keyframes slideSide{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
+
+/* page switching */
+.view-section,.view-section.active-view{opacity:1;transform:none;transition:none}
+.view-section.active-view{animation:viewIn .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes viewIn{from{opacity:0;transform:translateY(18px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+
+/* nav indicator */
+.nav-item{position:relative}
+.nav-item.active::before{content:"";position:absolute;left:-21px;top:20%;height:60%;width:3px;background:var(--neon-blue);box-shadow:0 0 12px var(--neon-blue);border-radius:2px;animation:grow .4s both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* glitch on titles */
+.glitch{animation:glitch 7s infinite}
+@keyframes glitch{0%,92%,100%{transform:none;text-shadow:0 0 10px rgba(0,240,255,.5)}
+93%{transform:translate(-2px,1px);text-shadow:3px 0 var(--neon-red),-3px 0 var(--neon-blue)}
+95%{transform:translate(2px,-1px);text-shadow:-3px 0 var(--neon-red),3px 0 var(--neon-blue)}
+97%{transform:translate(-1px,0);text-shadow:2px 0 var(--neon-red),-2px 0 var(--neon-blue)}}
+
+/* cards: 3D tilt + cursor spotlight */
+.stat-card{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .15s,box-shadow .3s,border-color .3s}
+.stat-card:hover{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-5px)}
+.stat-card::after,.generator-section::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(0,240,255,.12),transparent 70%)}
+.stat-card:hover::after,.generator-section:hover::after{opacity:1}
+.generator-section{position:relative}
+.stat-value.tick{animation:tick .5s}
+@keyframes tick{0%{filter:brightness(2.4);transform:scale(1.06)}100%{filter:none;transform:none}}
+
+/* threat alert */
+body::before{content:"";position:fixed;inset:0;z-index:9998;pointer-events:none;box-shadow:inset 0 0 0 rgba(255,0,60,0)}
+body.alert::before{animation:vignette 1s ease-in-out 3}
+@keyframes vignette{50%{box-shadow:inset 0 0 140px rgba(255,0,60,.55)}}
+body.alert .stat-card.danger{animation:shake .5s,dangerGlow 1s 3}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes dangerGlow{50%{box-shadow:0 0 35px rgba(255,0,60,.6)}}
+
+/* table */
+.row-in{animation:rowIn .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rowIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:none}}
+.new-row td{animation:flash 2.2s ease-out}
+@keyframes flash{0%{background:rgba(255,0,60,.45)}100%{background:transparent}}
+.block-btn{background:transparent;border:1px solid var(--neon-red);color:var(--neon-red);cursor:pointer;padding:5px 10px;border-radius:4px;font-weight:bold;font-family:var(--font-tech);transition:.3s}
+.block-btn:hover:not(:disabled){background:var(--neon-red);color:#fff;box-shadow:0 0 14px var(--neon-red)}
+.block-btn.blocked{background:var(--neon-red);color:#fff;cursor:default}
+
+/* buttons ripple, toasts, terminal */
+.btn-primary,.copy-btn{position:relative;overflow:hidden}
+.ripple{position:absolute;border-radius:50%;width:10px;height:10px;background:rgba(255,255,255,.5);transform:translate(-50%,-50%) scale(0);animation:ripple .6s ease-out forwards;pointer-events:none}
+@keyframes ripple{to{transform:translate(-50%,-50%) scale(30);opacity:0}}
+.toast{position:relative;overflow:hidden}
+.toast::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:currentColor;opacity:.7;animation:life 3s linear forwards}
+@keyframes life{to{width:0}}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--neon-green);vertical-align:middle;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+#terminal-output div,#terminal-output{scroll-behavior:smooth}
+
+/* dashboard row + radar */
+.dash-row{display:grid;grid-template-columns:1fr;gap:20px;margin:20px 0 40px}
+.dash-row .generator-section{margin:0!important}
+@media(max-width:1100px){.dash-row{grid-template-columns:1fr}}
+.radar{position:relative;width:min(100%,260px);aspect-ratio:1;margin:10px auto;border-radius:50%;border:1px solid var(--neon-green);overflow:hidden;
+background:linear-gradient(var(--border-glow),var(--border-glow)) center/1px 100% no-repeat,linear-gradient(var(--border-glow),var(--border-glow)) center/100% 1px no-repeat,
+repeating-radial-gradient(circle,transparent 0 31px,rgba(57,255,20,.25) 32px);box-shadow:0 0 25px rgba(57,255,20,.2),inset 0 0 25px rgba(57,255,20,.1)}
+.sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 280deg,rgba(57,255,20,.55) 360deg);animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.blip{position:absolute;width:8px;height:8px;margin:-4px;border-radius:50%;background:var(--neon-green);box-shadow:0 0 10px var(--neon-green);animation:ping 1.6s ease-out infinite}
+.blip.hot{background:var(--neon-red);box-shadow:0 0 14px var(--neon-red);width:10px;height:10px;margin:-5px}
+@keyframes ping{0%{outline:0 solid rgba(255,255,255,.5)}100%{outline:16px solid transparent}}
+.radar-foot{text-align:center;font-family:var(--font-code);font-size:13px;color:var(--neon-green)}
+.radar-foot.hot{color:var(--neon-red);animation:blink .5s steps(1) infinite}
+
+/* sidebar footer */
+.sys-foot{margin-top:auto;font-family:var(--font-code);font-size:12px;color:var(--text-muted);border-top:1px solid var(--border-glow);padding-top:15px;line-height:1.9}
+.sys-foot b{color:var(--neon-green)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.sweep{animation:spin 4s linear infinite!important}}
