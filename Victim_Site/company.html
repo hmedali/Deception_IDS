@@ -1,47 +1,229 @@
-<!-- 🚨 ShadowTrap Smart Honeytoken (V2.0) 🚨 -->
-<script>
-    (function(){
-        // 🔴 هنا التعديل الجديد: فصلنا الموقع عن نوع الفخ
-        const targetSite = "بوابة الشركة (Company Portal)"; 
-        const honeytokenType = "فتح أدوات المطور (F12/Inspect)";
-        
-        const clientApiKey = "ST-DEMO-KEY-2026";
-        const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
-        let alertTriggered = false;
-
-        function fireTrap() {
-            if (alertTriggered) return;
-            alertTriggered = true;
-            console.warn("ShadowTrap: Suspicious activity detected.");
-            
-            // 🔴 إرسال البيانات المفصلة للسيرفر
-            fetch(shadowTrapApi, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json', 
-                    'X-API-Key': clientApiKey 
-                },
-                body: JSON.stringify({ 
-                    target_site: targetSite, 
-                    honeytoken_type: honeytokenType 
-                })
-            }).catch(err => console.error(err));
-            
-            setTimeout(() => { alertTriggered = false; }, 5000);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Portal | بوابة الشركة</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 32px;
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+        .login-container h2 {
+            margin: 0 0 20px;
+            color: #333;
+            font-weight: 600;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        .login-btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .login-btn:hover {
+            background-color: #1557b0;
+        }
+        .footer-text {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
 
-        // فخ الكيبورد (F12, Inspect, View Source)
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
-                fireTrap();
-            }
-        });
+    <div class="login-container">
+        <div class="logo">
+            <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <h2>Company Portal</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 30px;">Authorized Personnel Only</p>
+        
+        <form onsubmit="event.preventDefault(); alert('Access Denied: Invalid Credentials');">
+            <div class="input-group">
+                <label>Employee ID</label>
+                <input type="text" placeholder="Enter your ID" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="login-btn">Secure Login</button>
+        </form>
+        
+        <div class="footer-text">
+            &copy; 2026 TechCorp Inc. All rights reserved.
+        </div>
+    </div>
 
-        // فخ الماوس
-        setInterval(() => {
-            if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
-                fireTrap();
+
+    <!-- ============================================== -->
+    <!-- 🚨 SHADOWTRAP: FULL HONEYTOKEN ARSENAL (V2) 🚨 -->
+    <!-- ============================================== -->
+
+    <!-- 1. الديكورات المخفية للهاكرز -->
+    <div style="display:none;">
+        <!-- أ. فخ الرابط المخفي -->
+        <a href="/admin-dashboard-login" id="ht-hidden-link" aria-hidden="true">Admin Login</a>
+        
+        <!-- ب. فخ ملف النسخة الاحتياطية -->
+        <a href="#" id="ht-fake-backup">database_backup_2026.zip</a>
+        
+        <!-- ج. فخ لوحة تحكم المدير الوهمية -->
+        <form id="ht-fake-admin">
+            <input type="text" name="username" value="admin">
+            <input type="password" name="password" value="">
+            <button type="submit">Login as Admin</button>
+        </form>
+
+        <!-- د. فخ المفتاح المسرب (مخفي كتعليق) -->
+        <!-- DEV NOTE: DO NOT DELETE THIS AWS KEY -> AKIA-SECRET-ADMIN-KEY-9988 -->
+        <p id="ht-leaked-key">AKIA-SECRET-ADMIN-KEY-9988</p>
+    </div>
+
+    <!-- 2. محرك الفخاخ الشامل (يجمع 8 أنواع فخاخ) -->
+    <script>
+        (function(){
+            // 🔴 اسم الموقع: بوابة الشركة
+            const targetSite = "بوابة الشركة (Company Portal)"; 
+            const clientApiKey = "ST-DEMO-KEY-2026";
+            const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
+            let triggeredTraps = new Set(); // لمنع التكرار
+
+            function fireTrap(trapType) {
+                if (triggeredTraps.has(trapType)) return;
+                triggeredTraps.add(trapType);
+                
+                console.warn("🚨 ShadowTrap Alert: " + trapType);
+                fetch(shadowTrapApi, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-API-Key': clientApiKey },
+                    body: JSON.stringify({ target_site: targetSite, honeytoken_type: trapType })
+                }).catch(err => console.error("ShadowTrap Connection Error"));
+                
+                // تنظيف السجل بعد 5 ثواني
+                setTimeout(() => { triggeredTraps.delete(trapType); }, 5000);
             }
-        }, 1000);
-    })();
-</script>
+
+            // --- 1. فخ اختصارات الكيبورد (F12, Inspect, View Source) ---
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
+                    fireTrap("فتح أدوات المطور بالكيبورد (Keyboard Shortcut)");
+                }
+            });
+
+            // --- 2. فخ تغير أبعاد الشاشة (DevTools Detection) ---
+            setInterval(() => {
+                if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+                    fireTrap("مراقبة أدوات المطور (DevTools Window)");
+                }
+            }, 1500);
+
+            // --- 3. فخ الرابط المخفي (Hidden Endpoint) ---
+            const hiddenLink = document.getElementById('ht-hidden-link');
+            if (hiddenLink) {
+                hiddenLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    fireTrap("النقر على رابط مخفي (Hidden Link Click)");
+                });
+            }
+
+            // --- 4. فخ ملف الباك أب (Fake Backup) ---
+            const backupLink = document.getElementById('ht-fake-backup');
+            if (backupLink) {
+                backupLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    fireTrap("محاولة تحميل ملف النسخة الاحتياطية (Backup Download)");
+                    alert("Error 403: Access Denied. Incident Logged."); 
+                });
+            }
+
+            // --- 5. فخ لوحة المدير الوهمية (Fake Admin Form) ---
+            const adminForm = document.getElementById('ht-fake-admin');
+            if (adminForm) {
+                adminForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    fireTrap("محاولة اختراق لوحة تحكم المدير (Admin Portal Login)");
+                    alert("Invalid Admin Credentials. IP Logged.");
+                });
+            }
+
+            // --- 6. فخ المفتاح المسرب (Leaked API Key Copy) ---
+            document.addEventListener('copy', (e) => {
+                const copiedText = document.getSelection().toString();
+                if (copiedText.includes("AKIA-SECRET-ADMIN-KEY")) {
+                    fireTrap("سرقة مفتاح API مسرب (Leaked Key)");
+                }
+            });
+
+            // --- 7. فخ سرقة الجلسات من LocalStorage ---
+            localStorage.setItem('admin_auth_token', 'super_secret_admin_token_998877');
+            const originalGetItem = localStorage.getItem;
+            localStorage.getItem = function(key) {
+                if (key === 'admin_auth_token') {
+                    fireTrap("محاولة سرقة توكن الإدارة (LocalStorage Theft)");
+                }
+                return originalGetItem.apply(this, arguments);
+            };
+
+            // --- 8. فخ الكوكيز المسمومة (Session Hijacking) ---
+            document.cookie = "admin_session=guest; path=/";
+            setInterval(() => {
+                if (document.cookie.includes("admin_session=admin") || document.cookie.includes("admin_session=true")) {
+                    fireTrap("تلاعب بالكوكيز (Session Hijacking)");
+                    document.cookie = "admin_session=guest; path=/"; // إعادة تعيين الكوكي
+                }
+            }, 2000);
+            
+        })();
+    </script>
+</body>
+</html>

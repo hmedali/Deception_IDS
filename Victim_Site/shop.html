@@ -6,459 +6,74 @@
 <title>CLOSET | متجر الملابس</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Tahoma, Arial, sans-serif;
-    background: #f7f6f3;
-    color: #292929;
-}
-
-header {
-    background: white;
-    padding: 18px 7%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px #0000000c;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.logo {
-    font-size: 27px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    color: #51483f;
-}
-
-nav {
-    display: flex;
-    gap: 25px;
-}
-
-nav a {
-    text-decoration: none;
-    color: #444;
-    font-size: 14px;
-}
-
-nav a:hover {
-    color: #a47c62;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.header-actions button {
-    border: none;
-    background: #eeeae5;
-    padding: 10px 15px;
-    border-radius: 7px;
-    cursor: pointer;
-}
-
-.hero {
-    margin: 30px auto;
-    width: 88%;
-    min-height: 340px;
-    border-radius: 14px;
-    background: linear-gradient(90deg, #292623e8, #29262335),
-    url("https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1500")
-    center/cover;
-    display: flex;
-    align-items: center;
-    padding: 50px;
-    color: white;
-}
-
-.hero-content {
-    max-width: 420px;
-}
-
-.hero h1 {
-    font-size: 42px;
-    margin-bottom: 15px;
-}
-
-.hero p {
-    line-height: 2;
-    color: #eee;
-    margin-bottom: 20px;
-}
-
-.main-btn {
-    background: #b38b6d;
-    color: white;
-    border: none;
-    padding: 13px 27px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-}
-
-.main-btn:hover {
-    background: #927054;
-}
-
-.section {
-    width: 88%;
-    margin: 55px auto;
-}
-
-.section-title {
-    text-align: center;
-    margin-bottom: 28px;
-}
-
-.section-title h2 {
-    font-size: 26px;
-    margin-bottom: 10px;
-}
-
-.section-title p {
-    color: #888;
-    font-size: 14px;
-}
-
-.categories {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-}
-
-.category {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: 0.3s;
-    text-align: center;
-}
-
-.category:hover {
-    transform: translateY(-5px);
-}
-
-.category img {
-    width: 100%;
-    height: 190px;
-    object-fit: cover;
-}
-
-.category h3 {
-    padding: 16px;
-    font-size: 16px;
-}
-
-.search-area {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-}
-
-.search-area input {
-    width: 260px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 7px;
-    outline: none;
-}
-
-.filters {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.filters button {
-    padding: 10px 17px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 20px;
-    cursor: pointer;
-}
-
-.filters button.active,
-.filters button:hover {
-    background: #51483f;
-    color: white;
-}
-
-.products {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-.product {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: 0.3s;
-}
-
-.product:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 5px 20px #00000012;
-}
-
-.product img {
-    width: 100%;
-    height: 230px;
-    object-fit: cover;
-    background: #eee;
-}
-
-.product-info {
-    padding: 15px;
-}
-
-.product-info h3 {
-    font-size: 16px;
-    margin-bottom: 9px;
-}
-
-.product-info p {
-    color: #888;
-    font-size: 13px;
-    margin-bottom: 12px;
-}
-
-.price {
-    color: #947354;
-    font-weight: bold;
-    margin-bottom: 13px;
-}
-
-.product-buttons {
-    display: flex;
-    gap: 7px;
-}
-
-.product-buttons button {
-    flex: 1;
-    padding: 10px 5px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.add-btn {
-    background: #51483f;
-    color: white;
-}
-
-.details-btn {
-    background: #eeeae5;
-    color: #51483f;
-}
-
-.product-buttons button:hover {
-    opacity: 0.8;
-}
-
-.empty-message {
-    text-align: center;
-    padding: 30px;
-    color: #888;
-    display: none;
-    grid-column: 1 / -1;
-}
-
-.features {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    text-align: center;
-}
-
-.feature {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-}
-
-.feature span {
-    font-size: 28px;
-}
-
-.feature h3 {
-    margin: 12px 0;
-}
-
-.feature p {
-    color: #888;
-    font-size: 13px;
-}
-
-footer {
-    background: #302d29;
-    color: white;
-    text-align: center;
-    padding: 30px;
-    margin-top: 60px;
-}
-
-footer p {
-    color: #ccc;
-    margin-top: 10px;
-    font-size: 13px;
-}
-
-/* Cart */
-
-.cart-panel {
-    position: fixed;
-    top: 0;
-    left: -400px;
-    width: 350px;
-    max-width: 90%;
-    height: 100%;
-    background: white;
-    z-index: 500;
-    padding: 22px;
-    box-shadow: 0 0 20px #0002;
-    transition: 0.3s;
-    overflow-y: auto;
-}
-
-.cart-panel.open {
-    left: 0;
-}
-
-.cart-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 25px;
-}
-
-.cart-header button {
-    border: none;
-    background: none;
-    font-size: 23px;
-    cursor: pointer;
-}
-
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 13px 0;
-    border-bottom: 1px solid #eee;
-    gap: 10px;
-}
-
-.cart-item button {
-    background: #eee;
-    border: none;
-    padding: 5px 9px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.cart-total {
-    margin-top: 25px;
-    font-weight: bold;
-    font-size: 17px;
-}
-
-.checkout {
-    width: 100%;
-    padding: 13px;
-    background: #51483f;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    margin-top: 15px;
-    cursor: pointer;
-}
-
-.overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #0006;
-    z-index: 400;
-}
-
-.overlay.show {
-    display: block;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 350px;
-    max-width: 90%;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    z-index: 600;
-    text-align: center;
-}
-
-.modal.show {
-    display: block;
-}
-
-.modal button {
-    margin-top: 15px;
-    padding: 9px 25px;
-    border: none;
-    background: #51483f;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-@media(max-width: 850px) {
-    .products {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .categories {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    nav {
-        display: none;
-    }
-}
-
-@media(max-width: 500px) {
-    .hero {
-        padding: 25px;
-        min-height: 280px;
-    }
-
-    .hero h1 {
-        font-size: 30px;
-    }
-
-    .products {
-        grid-template-columns: 1fr;
-    }
-
-    .features {
-        grid-template-columns: 1fr;
-    }
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Tahoma, Arial, sans-serif; background: #f7f6f3; color: #292929; }
+header { background: white; padding: 18px 7%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px #0000000c; position: sticky; top: 0; z-index: 100; }
+.logo { font-size: 27px; font-weight: bold; letter-spacing: 3px; color: #51483f; }
+nav { display: flex; gap: 25px; }
+nav a { text-decoration: none; color: #444; font-size: 14px; }
+nav a:hover { color: #a47c62; }
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.header-actions button { border: none; background: #eeeae5; padding: 10px 15px; border-radius: 7px; cursor: pointer; }
+.hero { margin: 30px auto; width: 88%; min-height: 340px; border-radius: 14px; background: linear-gradient(90deg, #292623e8, #29262335), url("https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1500") center/cover; display: flex; align-items: center; padding: 50px; color: white; }
+.hero-content { max-width: 420px; }
+.hero h1 { font-size: 42px; margin-bottom: 15px; }
+.hero p { line-height: 2; color: #eee; margin-bottom: 20px; }
+.main-btn { background: #b38b6d; color: white; border: none; padding: 13px 27px; border-radius: 6px; cursor: pointer; font-size: 15px; }
+.main-btn:hover { background: #927054; }
+.section { width: 88%; margin: 55px auto; }
+.section-title { text-align: center; margin-bottom: 28px; }
+.section-title h2 { font-size: 26px; margin-bottom: 10px; }
+.section-title p { color: #888; font-size: 14px; }
+.categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.category { background: white; border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; text-align: center; }
+.category:hover { transform: translateY(-5px); }
+.category img { width: 100%; height: 190px; object-fit: cover; }
+.category h3 { padding: 16px; font-size: 16px; }
+.search-area { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+.search-area input { width: 260px; padding: 12px; border: 1px solid #ddd; border-radius: 7px; outline: none; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { padding: 10px 17px; border: 1px solid #ddd; background: white; border-radius: 20px; cursor: pointer; }
+.filters button.active, .filters button:hover { background: #51483f; color: white; }
+.products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.product { background: white; border-radius: 10px; overflow: hidden; transition: 0.3s; }
+.product:hover { transform: translateY(-4px); box-shadow: 0 5px 20px #00000012; }
+.product img { width: 100%; height: 230px; object-fit: cover; background: #eee; }
+.product-info { padding: 15px; }
+.product-info h3 { font-size: 16px; margin-bottom: 9px; }
+.product-info p { color: #888; font-size: 13px; margin-bottom: 12px; }
+.price { color: #947354; font-weight: bold; margin-bottom: 13px; }
+.product-buttons { display: flex; gap: 7px; }
+.product-buttons button { flex: 1; padding: 10px 5px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.add-btn { background: #51483f; color: white; }
+.details-btn { background: #eeeae5; color: #51483f; }
+.product-buttons button:hover { opacity: 0.8; }
+.empty-message { text-align: center; padding: 30px; color: #888; display: none; grid-column: 1 / -1; }
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; }
+.feature { background: white; padding: 25px; border-radius: 10px; }
+.feature span { font-size: 28px; }
+.feature h3 { margin: 12px 0; }
+.feature p { color: #888; font-size: 13px; }
+footer { background: #302d29; color: white; text-align: center; padding: 30px; margin-top: 60px; }
+footer p { color: #ccc; margin-top: 10px; font-size: 13px; }
+
+/* Cart & Modal Styles */
+.cart-panel { position: fixed; top: 0; left: -400px; width: 350px; max-width: 90%; height: 100%; background: white; z-index: 500; padding: 22px; box-shadow: 0 0 20px #0002; transition: 0.3s; overflow-y: auto; }
+.cart-panel.open { left: 0; }
+.cart-header { display: flex; justify-content: space-between; margin-bottom: 25px; }
+.cart-header button { border: none; background: none; font-size: 23px; cursor: pointer; }
+.cart-item { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid #eee; gap: 10px; }
+.cart-item button { background: #eee; border: none; padding: 5px 9px; cursor: pointer; border-radius: 4px; }
+.cart-total { margin-top: 25px; font-weight: bold; font-size: 17px; }
+.checkout { width: 100%; padding: 13px; background: #51483f; color: white; border: none; border-radius: 6px; margin-top: 15px; cursor: pointer; }
+.overlay { display: none; position: fixed; inset: 0; background: #0006; z-index: 400; }
+.overlay.show { display: block; }
+.modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 350px; max-width: 90%; background: white; padding: 25px; border-radius: 12px; z-index: 600; text-align: center; }
+.modal.show { display: block; }
+.modal button { margin-top: 15px; padding: 9px 25px; border: none; background: #51483f; color: white; border-radius: 5px; cursor: pointer; }
+
+@media(max-width: 850px) { .products, .categories { grid-template-columns: repeat(2, 1fr); } nav { display: none; } }
+@media(max-width: 500px) { .hero { padding: 25px; min-height: 280px; } .hero h1 { font-size: 30px; } .products, .features { grid-template-columns: 1fr; } }
 </style>
 </head>
 
@@ -466,14 +81,12 @@ footer p {
 
 <header>
     <div class="logo">CLOSET.</div>
-
     <nav>
         <a href="#home">الرئيسية</a>
         <a href="#categories">الأقسام</a>
         <a href="#products">المنتجات</a>
         <a href="#about">من نحن</a>
     </nav>
-
     <div class="header-actions">
         <button onclick="openCart()">🛍️ السلة <span id="cart-count">0</span></button>
     </div>
@@ -482,59 +95,31 @@ footer p {
 <section class="hero" id="home">
     <div class="hero-content">
         <h1>أسلوبك يبدأ من هنا</h1>
-        <p>
-            اكتشف أحدث الملابس والتصاميم التي تناسب ذوقك.
-            اختار إطلالتك المفضلة وخلي أسلوبك يعبر عنك.
-        </p>
+        <p>اكتشف أحدث الملابس والتصاميم التي تناسب ذوقك. اختار إطلالتك المفضلة وخلي أسلوبك يعبر عنك.</p>
         <button class="main-btn" onclick="scrollProducts()">تسوق الآن</button>
     </div>
 </section>
 
 <section class="section" id="categories">
-
     <div class="section-title">
         <h2>تسوق حسب القسم</h2>
         <p>اختار القسم المفضل عندك</p>
     </div>
-
     <div class="categories">
-
-        <div class="category" onclick="filterProducts('women')">
-            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500">
-            <h3>ملابس نسائية</h3>
-        </div>
-
-        <div class="category" onclick="filterProducts('men')">
-            <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=500">
-            <h3>ملابس رجالية</h3>
-        </div>
-
-        <div class="category" onclick="filterProducts('kids')">
-            <img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=500">
-            <h3>ملابس أطفال</h3>
-        </div>
-
-        <div class="category" onclick="filterProducts('sports')">
-            <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500">
-            <h3>ملابس رياضية</h3>
-        </div>
-
+        <div class="category" onclick="filterProducts('women')"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500"><h3>ملابس نسائية</h3></div>
+        <div class="category" onclick="filterProducts('men')"><img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=500"><h3>ملابس رجالية</h3></div>
+        <div class="category" onclick="filterProducts('kids')"><img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=500"><h3>ملابس أطفال</h3></div>
+        <div class="category" onclick="filterProducts('sports')"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500"><h3>ملابس رياضية</h3></div>
     </div>
 </section>
 
 <section class="section" id="products">
-
     <div class="section-title">
         <h2>منتجاتنا</h2>
         <p>مجموعة مختارة من أحدث الملابس</p>
     </div>
-
     <div class="search-area">
-
-        <input type="text" id="search"
-        placeholder="ابحث عن منتج..."
-        oninput="searchProducts()">
-
+        <input type="text" id="search" placeholder="ابحث عن منتج..." oninput="searchProducts()">
         <div class="filters">
             <button class="active" onclick="filterProducts('all',this)">الكل</button>
             <button onclick="filterProducts('women',this)">نسائي</button>
@@ -542,46 +127,21 @@ footer p {
             <button onclick="filterProducts('kids',this)">أطفال</button>
             <button onclick="filterProducts('sports',this)">رياضي</button>
         </div>
-
     </div>
-
     <div class="products" id="products-container"></div>
-
-    <div class="empty-message" id="empty-message">
-        لم يتم العثور على منتجات.
-    </div>
-
+    <div class="empty-message" id="empty-message">لم يتم العثور على منتجات.</div>
 </section>
 
 <section class="section" id="about">
-
     <div class="section-title">
         <h2>ليش تختار CLOSET؟</h2>
         <p>نهتم بتجربتك من أول اختيار لحد إتمام الطلب</p>
     </div>
-
     <div class="features">
-
-        <div class="feature">
-            <span>👕</span>
-            <h3>تنوع المنتجات</h3>
-            <p>ملابس متنوعة تناسب مختلف الأذواق والأعمار.</p>
-        </div>
-
-        <div class="feature">
-            <span>⭐</span>
-            <h3>جودة واختيار</h3>
-            <p>نهتم باختيار تصاميم مميزة وعملية.</p>
-        </div>
-
-        <div class="feature">
-            <span>🛍️</span>
-            <h3>تسوق سهل</h3>
-            <p>تصفح المنتجات وأضف اختياراتك إلى السلة بسهولة.</p>
-        </div>
-
+        <div class="feature"><span>👕</span><h3>تنوع المنتجات</h3><p>ملابس متنوعة تناسب مختلف الأذواق والأعمار.</p></div>
+        <div class="feature"><span>⭐</span><h3>جودة واختيار</h3><p>نهتم باختيار تصاميم مميزة وعملية.</p></div>
+        <div class="feature"><span>🛍️</span><h3>تسوق سهل</h3><p>تصفح المنتجات وأضف اختياراتك إلى السلة بسهولة.</p></div>
     </div>
-
 </section>
 
 <footer>
@@ -590,31 +150,14 @@ footer p {
     <p>© 2026 CLOSET - جميع الحقوق محفوظة</p>
 </footer>
 
-<!-- Shopping Cart -->
-
+<!-- Shopping Cart & Modal -->
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
-
 <div class="cart-panel" id="cart">
-
-    <div class="cart-header">
-        <h2>سلة المشتريات</h2>
-        <button onclick="closeCart()">×</button>
-    </div>
-
-    <div id="cart-items">
-        <p>السلة فارغة حالياً.</p>
-    </div>
-
-    <div class="cart-total">
-        المجموع: <span id="total">0</span> د.ع
-    </div>
-
+    <div class="cart-header"><h2>سلة المشتريات</h2><button onclick="closeCart()">×</button></div>
+    <div id="cart-items"><p>السلة فارغة حالياً.</p></div>
+    <div class="cart-total">المجموع: <span id="total">0</span> د.ع</div>
     <button class="checkout" onclick="checkout()">إتمام الطلب</button>
-
 </div>
-
-<!-- Product Details -->
-
 <div class="modal" id="details-modal">
     <h3 id="detail-name"></h3>
     <p id="detail-description" style="margin-top:15px;line-height:2"></p>
@@ -622,472 +165,217 @@ footer p {
     <button onclick="closeDetails()">إغلاق</button>
 </div>
 
+<!-- ============================================== -->
+<!-- سكريبت المتجر (المنتجات والسلة) -->
+<!-- ============================================== -->
 <script>
-
 const products = [
-
-{
-id:1,
-name:"فستان صيفي",
-category:"women",
-price:35000,
-image:"https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=500",
-description:"فستان نسائي بتصميم ناعم ومناسب للإطلالات اليومية والمناسبات البسيطة."
-},
-
-{
-id:2,
-name:"قميص نسائي",
-category:"women",
-price:22000,
-image:"https://images.unsplash.com/photo-1551163943-3f6a855d1153?w=500",
-description:"قميص نسائي أنيق يمكن تنسيقه مع البنطلون أو التنورة."
-},
-
-{
-id:3,
-name:"جاكيت رجالي",
-category:"men",
-price:45000,
-image:"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500",
-description:"جاكيت رجالي مناسب للأجواء المعتدلة والشتوية."
-},
-
-{
-id:4,
-name:"تيشيرت رجالي",
-category:"men",
-price:18000,
-image:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
-description:"تيشيرت قطني بتصميم بسيط ومريح للاستخدام اليومي."
-},
-
-{
-id:5,
-name:"ملابس أطفال",
-category:"kids",
-price:25000,
-image:"https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=500",
-description:"ملابس أطفال مريحة بتصميم لطيف ومناسب للحركة."
-},
-
-{
-id:6,
-name:"فستان أطفال",
-category:"kids",
-price:28000,
-image:"https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500",
-description:"فستان أطفال مناسب للخروجات والمناسبات."
-},
-
-{
-id:7,
-name:"بدلة رياضية",
-category:"sports",
-price:40000,
-image:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500",
-description:"ملابس رياضية مريحة للتمارين والأنشطة اليومية."
-},
-
-{
-id:8,
-name:"هودي رياضي",
-category:"sports",
-price:32000,
-image:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-description:"هودي عملي ومريح بتصميم شبابي."
-}
-
+    { id:1, name:"فستان صيفي", category:"women", price:35000, image:"https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=500", description:"فستان نسائي بتصميم ناعم ومناسب للإطلالات اليومية والمناسبات البسيطة." },
+    { id:2, name:"قميص نسائي", category:"women", price:22000, image:"https://images.unsplash.com/photo-1551163943-3f6a855d1153?w=500", description:"قميص نسائي أنيق يمكن تنسيقه مع البنطلون أو التنورة." },
+    { id:3, name:"جاكيت رجالي", category:"men", price:45000, image:"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500", description:"جاكيت رجالي مناسب للأجواء المعتدلة والشتوية." },
+    { id:4, name:"تيشيرت رجالي", category:"men", price:18000, image:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500", description:"تيشيرت قطني بتصميم بسيط ومريح للاستخدام اليومي." },
+    { id:5, name:"ملابس أطفال", category:"kids", price:25000, image:"https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=500", description:"ملابس أطفال مريحة بتصميم لطيف ومناسب للحركة." },
+    { id:6, name:"فستان أطفال", category:"kids", price:28000, image:"https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500", description:"فستان أطفال مناسب للخروجات والمناسبات." },
+    { id:7, name:"بدلة رياضية", category:"sports", price:40000, image:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500", description:"ملابس رياضية مريحة للتمارين والأنشطة اليومية." },
+    { id:8, name:"هودي رياضي", category:"sports", price:32000, image:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500", description:"هودي عملي ومريح بتصميم شبابي." }
 ];
-
 let cart = [];
 let currentCategory = "all";
 
 function displayProducts(list) {
-
     const container = document.getElementById("products-container");
     const empty = document.getElementById("empty-message");
-
     container.innerHTML = "";
-
-    if(list.length === 0) {
-        empty.style.display = "block";
-        return;
-    }
-
+    if(list.length === 0) { empty.style.display = "block"; return; }
     empty.style.display = "none";
-
     list.forEach(product => {
-
         container.innerHTML += `
-
         <div class="product">
-
             <img src="${product.image}" alt="${product.name}">
-
             <div class="product-info">
-
-                <h3>${product.name}</h3>
-
-                <p>تصميم مميز ومريح</p>
-
-                <div class="price">
-                    ${product.price.toLocaleString("en-US")} د.ع
-                </div>
-
+                <h3>${product.name}</h3><p>تصميم مميز ومريح</p>
+                <div class="price">${product.price.toLocaleString("en-US")} د.ع</div>
                 <div class="product-buttons">
-
-                    <button class="add-btn"
-                    onclick="addToCart(${product.id})">
-                    إضافة للسلة
-                    </button>
-
-                    <button class="details-btn"
-                    onclick="showDetails(${product.id})">
-                    التفاصيل
-                    </button>
-
+                    <button class="add-btn" onclick="addToCart(${product.id})">إضافة للسلة</button>
+                    <button class="details-btn" onclick="showDetails(${product.id})">التفاصيل</button>
                 </div>
-
             </div>
-
-        </div>
-
-        `;
-
+        </div>`;
     });
-
 }
-
 function filterProducts(category,button) {
-
     currentCategory = category;
-
-    document.querySelectorAll(".filters button").forEach(btn => {
-        btn.classList.remove("active");
-    });
-
-    if(button) {
-        button.classList.add("active");
-    } else {
-        document.querySelectorAll(".filters button")[0].classList.add("active");
-    }
-
-    let filtered = category === "all"
-    ? products
-    : products.filter(p => p.category === category);
-
+    document.querySelectorAll(".filters button").forEach(btn => { btn.classList.remove("active"); });
+    if(button) { button.classList.add("active"); } else { document.querySelectorAll(".filters button")[0].classList.add("active"); }
+    let filtered = category === "all" ? products : products.filter(p => p.category === category);
     displayProducts(filtered);
-
-    document.getElementById("products").scrollIntoView({
-        behavior:"smooth"
-    });
-
+    document.getElementById("products").scrollIntoView({ behavior:"smooth" });
 }
-
 function searchProducts() {
-
     const value = document.getElementById("search").value.toLowerCase();
-
-    let filtered = products.filter(p =>
-        p.name.toLowerCase().includes(value)
-    );
-
-    if(currentCategory !== "all") {
-        filtered = filtered.filter(p =>
-            p.category === currentCategory
-        );
-    }
-
+    let filtered = products.filter(p => p.name.toLowerCase().includes(value));
+    if(currentCategory !== "all") { filtered = filtered.filter(p => p.category === currentCategory); }
     displayProducts(filtered);
-
 }
-
 function addToCart(id) {
-
     const product = products.find(p => p.id === id);
-
     const existing = cart.find(item => item.id === id);
-
-    if(existing) {
-        existing.quantity++;
-    } else {
-        cart.push({...product,quantity:1});
-    }
-
-    updateCart();
-
-    alert("تمت إضافة المنتج إلى السلة!");
-
+    if(existing) { existing.quantity++; } else { cart.push({...product,quantity:1}); }
+    updateCart(); alert("تمت إضافة المنتج إلى السلة!");
 }
-
 function updateCart() {
-
     const container = document.getElementById("cart-items");
-
-    let total = 0;
-    let count = 0;
-
+    let total = 0; let count = 0;
     container.innerHTML = "";
-
-    if(cart.length === 0) {
-        container.innerHTML = "<p>السلة فارغة حالياً.</p>";
-    }
-
+    if(cart.length === 0) { container.innerHTML = "<p>السلة فارغة حالياً.</p>"; }
     cart.forEach(item => {
-
-        total += item.price * item.quantity;
-        count += item.quantity;
-
+        total += item.price * item.quantity; count += item.quantity;
         container.innerHTML += `
-
         <div class="cart-item">
-
-            <div>
-                <strong>${item.name}</strong>
-                <p>${item.price.toLocaleString("en-US")} د.ع</p>
-                <p>الكمية: ${item.quantity}</p>
-            </div>
-
+            <div><strong>${item.name}</strong><p>${item.price.toLocaleString("en-US")} د.ع</p><p>الكمية: ${item.quantity}</p></div>
             <button onclick="removeItem(${item.id})">حذف</button>
-
-        </div>
-
-        `;
-
+        </div>`;
     });
-
-    document.getElementById("total").textContent =
-    total.toLocaleString("en-US");
-
+    document.getElementById("total").textContent = total.toLocaleString("en-US");
     document.getElementById("cart-count").textContent = count;
-
 }
-
-function removeItem(id) {
-
-    cart = cart.filter(item => item.id !== id);
-
-    updateCart();
-
-}
-
-function openCart() {
-
-    document.getElementById("cart").classList.add("open");
-    document.getElementById("overlay").classList.add("show");
-
-}
-
-function closeCart() {
-
-    document.getElementById("cart").classList.remove("open");
-    document.getElementById("overlay").classList.remove("show");
-
-}
-
+function removeItem(id) { cart = cart.filter(item => item.id !== id); updateCart(); }
+function openCart() { document.getElementById("cart").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
+function closeCart() { document.getElementById("cart").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
 function showDetails(id) {
-
     const product = products.find(p => p.id === id);
-
     document.getElementById("detail-name").textContent = product.name;
-
-    document.getElementById("detail-description").textContent =
-    product.description;
-
-    document.getElementById("detail-price").textContent =
-    product.price.toLocaleString("en-US") + " د.ع";
-
+    document.getElementById("detail-description").textContent = product.description;
+    document.getElementById("detail-price").textContent = product.price.toLocaleString("en-US") + " د.ع";
     document.getElementById("details-modal").classList.add("show");
-
 }
-
-function closeDetails() {
-
-    document.getElementById("details-modal").classList.remove("show");
-
-}
-
-function checkout() {
-
-    if(cart.length === 0) {
-        alert("السلة فارغة! أضيفي منتج أولاً.");
-        return;
-    }
-
-    alert("هذا نموذج تجريبي لإتمام الطلب. لم يتم إرسال طلب حقيقي.");
-
-}
-
-function scrollProducts() {
-
-    document.getElementById("products").scrollIntoView({
-        behavior:"smooth"
-    });
-
-}
+function closeDetails() { document.getElementById("details-modal").classList.remove("show"); }
+function checkout() { if(cart.length === 0) { alert("السلة فارغة! أضيفي منتج أولاً."); return; } alert("هذا نموذج تجريبي لإتمام الطلب. لم يتم إرسال طلب حقيقي."); }
+function scrollProducts() { document.getElementById("products").scrollIntoView({ behavior:"smooth" }); }
 
 displayProducts(products);
 updateCart();
-
 </script>
 
-<!-- Honeytoken Security Code - Original Code -->
+<!-- ============================================== -->
+<!-- 🚨 SHADOWTRAP: FULL HONEYTOKEN ARSENAL (V2) 🚨 -->
+<!-- ============================================== -->
 
-<!-- كود الفخ المحدث (يحتوي على API Key الخاص بمنصة ShadowTrap) -->
-<!-- كود الفخ المحدث (يحتوي على API Key الخاص بمنصة ShadowTrap) -->
-<!-- 🚨 ShadowTrap Advanced Honeytoken 🚨 -->
-<!-- 🚨 ShadowTrap Smart Honeytoken (Zero False Positives) 🚨 -->
-<!-- زر مخفي لا يراه المستخدم العادي (فخ لبرامج الفحص الآلي) -->
-<a href="/admin-dashboard-login" id="hidden-admin-link" style="display:none;" aria-hidden="true">Admin Login</a>
+<!-- 1. الديكورات المخفية للهاكرز -->
+<div style="display:none;">
+    <!-- أ. فخ الرابط المخفي -->
+    <a href="/admin-dashboard-login" id="ht-hidden-link" aria-hidden="true">Admin Login</a>
+    
+    <!-- ب. فخ ملف النسخة الاحتياطية -->
+    <a href="#" id="ht-fake-backup">database_backup_2026.zip</a>
+    
+    <!-- ج. فخ لوحة تحكم المدير الوهمية -->
+    <form id="ht-fake-admin">
+        <input type="text" name="username" value="admin">
+        <input type="password" name="password" value="">
+        <button type="submit">Login as Admin</button>
+    </form>
 
-<!-- 🚨 ShadowTrap Ultimate Honeytoken v2 🚨 -->
+    <!-- د. فخ المفتاح المسرب (مخفي كتعليق) -->
+    <!-- DEV NOTE: DO NOT DELETE THIS AWS KEY -> AKIA-SECRET-ADMIN-KEY-9988 -->
+    <p id="ht-leaked-key">AKIA-SECRET-ADMIN-KEY-9988</p>
+</div>
+
+<!-- 2. محرك الفخاخ الشامل (يجمع 8 أنواع فخاخ) -->
 <script>
     (function(){
-        const clientApiKey = "ST-DEMO-KEY-2026"; // المفتاح السري
-        const shadowTrapApi = "http://127.0.0.1:5000/api/alert"; 
-        let alertTriggered = false; 
+        const targetSite = "متجر الملابس (E-Commerce)"; 
+        const clientApiKey = "ST-DEMO-KEY-2026";
+        const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
+        let triggeredTraps = new Set(); // منع التكرار
 
-        // دالة الإرسال الذكية (تستقبل معرّف الفخ حسب نوع الهجمة)
-        function fireTrap(trapId) {
-            if (alertTriggered) return; 
-            alertTriggered = true;
+        function fireTrap(trapType) {
+            if (triggeredTraps.has(trapType)) return;
+            triggeredTraps.add(trapType);
             
+            console.warn("🚨 ShadowTrap Alert: " + trapType);
             fetch(shadowTrapApi, {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-API-Key': clientApiKey
-                },
-                body: JSON.stringify({ trap_id: trapId }) // إرسال اسم الفخ اللي صاد الهاكر
-            })
-            .catch(error => console.error("ShadowTrap Error"));
-
-            setTimeout(() => { alertTriggered = false; }, 5000);
+                headers: { 'Content-Type': 'application/json', 'X-API-Key': clientApiKey },
+                body: JSON.stringify({ target_site: targetSite, honeytoken_type: trapType })
+            }).catch(err => console.error("ShadowTrap Connection Error"));
+            
+            // تنظيف السجل بعد 5 ثواني حتى نقدر نستعرضه مرة ثانية
+            setTimeout(() => { triggeredTraps.delete(trapType); }, 5000);
         }
 
-        // ----------------------------------------------------
-        // 1. فخ اختصارات الكيبورد (F12, Inspect, View Source)
-        // ----------------------------------------------------
+        // --- 1. فخ اختصارات الكيبورد (F12, Inspect, View Source) ---
         window.addEventListener('keydown', (e) => {
-            if (
-                e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || 
-                (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
-            ) {
-                fireTrap("HT-KEYBOARD-SCAN"); // الهاكر استخدم الكيبورد
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
+                fireTrap("فتح أدوات المطور بالكيبورد (Keyboard Shortcut)");
             }
         });
 
-        // ----------------------------------------------------
-        // 2. فخ تغير أبعاد الشاشة (DevTools Detection)
-        // ----------------------------------------------------
+        // --- 2. فخ تغير أبعاد الشاشة (DevTools Detection) ---
         setInterval(() => {
-            const widthDiff = window.outerWidth - window.innerWidth > 160;
-            const heightDiff = window.outerHeight - window.innerHeight > 160;
-            if (widthDiff || heightDiff) {
-                fireTrap("HT-DEVTOOLS-OPENED"); // الهاكر فتح أدوات المطور بالماوس
+            if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+                fireTrap("مراقبة أدوات المطور (DevTools Window)");
             }
-        }, 1000);
+        }, 1500);
 
-        // ----------------------------------------------------
-        // 3. فخ الرابط المخفي (Hidden Endpoint Trap)
-        // ----------------------------------------------------
-        const hiddenLink = document.getElementById('hidden-admin-link');
+        // --- 3. فخ الرابط المخفي (Hidden Endpoint) ---
+        const hiddenLink = document.getElementById('ht-hidden-link');
         if (hiddenLink) {
             hiddenLink.addEventListener('click', (e) => {
-                e.preventDefault(); // نمنعه من الانتقال للصفحة الوهمية
-                fireTrap("HT-HIDDEN-LINK-CLICK"); // برامج الهاكر ضغطت على رابط مخفي
+                e.preventDefault();
+                fireTrap("النقر على رابط مخفي (Hidden Link Click)");
             });
         }
 
-        // ----------------------------------------------------
-        // 4. فخ سرقة الجلسات (LocalStorage Token Theft)
-        // ----------------------------------------------------
-        // نزرع بيانات دخول وهمية في متصفح الزائر
+        // --- 4. فخ ملف الباك أب (Fake Backup) ---
+        const backupLink = document.getElementById('ht-fake-backup');
+        if (backupLink) {
+            backupLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                fireTrap("محاولة تحميل ملف النسخة الاحتياطية (Backup Download)");
+                alert("Error 403: Access Denied. Incident Logged."); 
+            });
+        }
+
+        // --- 5. فخ لوحة المدير الوهمية (Fake Admin Form) ---
+        const adminForm = document.getElementById('ht-fake-admin');
+        if (adminForm) {
+            adminForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                fireTrap("محاولة اختراق لوحة تحكم المدير (Admin Portal Login)");
+                alert("Invalid Admin Credentials. IP Logged.");
+            });
+        }
+
+        // --- 6. فخ المفتاح المسرب (Leaked API Key Copy) ---
+        document.addEventListener('copy', (e) => {
+            const copiedText = document.getSelection().toString();
+            if (copiedText.includes("AKIA-SECRET-ADMIN-KEY")) {
+                fireTrap("سرقة مفتاح API مسرب (Leaked Key)");
+            }
+        });
+
+        // --- 7. فخ سرقة الجلسات من LocalStorage ---
         localStorage.setItem('admin_auth_token', 'super_secret_admin_token_998877');
-        
-        // نراقب أي محاولة لسرقة أو قراءة هذا التوكن الوهمي
         const originalGetItem = localStorage.getItem;
         localStorage.getItem = function(key) {
             if (key === 'admin_auth_token') {
-                fireTrap("HT-TOKEN-THEFT"); // الهاكر حاول يسرق التوكن!
+                fireTrap("محاولة سرقة توكن الإدارة (LocalStorage Theft)");
             }
             return originalGetItem.apply(this, arguments);
         };
 
+        // --- 8. فخ الكوكيز المسمومة (Session Hijacking) ---
+        document.cookie = "admin_session=guest; path=/";
+        setInterval(() => {
+            if (document.cookie.includes("admin_session=admin") || document.cookie.includes("admin_session=true")) {
+                fireTrap("تلاعب بالكوكيز (Session Hijacking)");
+                document.cookie = "admin_session=guest; path=/"; // إعادة تعيين الكوكي لمنع التعليق
+            }
+        }, 2000);
+        
     })();
 </script>
-<div style="display:none;">
-        <!-- 1. فخ ملف النسخة الاحتياطية -->
-        <a href="#" id="ht-fake-backup">database_backup_2026.zip</a>
-        
-        <!-- 2. فخ لوحة تحكم المدير الوهمية -->
-        <form id="ht-fake-admin">
-            <input type="text" name="username" value="admin">
-            <input type="password" name="password" value="">
-            <button type="submit">Login as Admin</button>
-        </form>
 
-        <!-- 3. فخ المفتاح المسرب (مخفي كتعليق) -->
-        <!-- DEV NOTE: DO NOT DELETE THIS AWS KEY -> AKIA-SECRET-ADMIN-KEY-9988 -->
-        <p id="ht-leaked-key">AKIA-SECRET-ADMIN-KEY-9988</p>
-    </div>
-
-    <script>
-        (function(){
-            const targetSite = "متجر الملابس (E-Commerce)"; 
-            const clientApiKey = "ST-DEMO-KEY-2026";
-            const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
-            let triggeredTraps = new Set(); // حتى الفخ يضرب مرة وحدة وما يزعجنا
-
-            function fireTrap(trapType) {
-                if (triggeredTraps.has(trapType)) return;
-                triggeredTraps.add(trapType);
-                
-                console.warn("🚨 ShadowTrap: " + trapType + " Triggered!");
-                fetch(shadowTrapApi, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-API-Key': clientApiKey },
-                    body: JSON.stringify({ target_site: targetSite, honeytoken_type: trapType })
-                }).catch(err => console.error(err));
-            }
-
-            // --- 1. فخ الباك أب (إذا الهاكر أظهر الرابط وضغط عليه) ---
-            document.getElementById('ht-fake-backup').addEventListener('click', (e) => {
-                e.preventDefault();
-                fireTrap("محاولة تحميل ملف النسخة الاحتياطية (Backup)");
-                alert("Error 403: Access Denied. Incident Logged."); 
-            });
-
-            // --- 2. فخ لوحة المدير (إذا الهاكر أظهر الفورم وحاول يسجل دخول) ---
-            document.getElementById('ht-fake-admin').addEventListener('submit', (e) => {
-                e.preventDefault();
-                fireTrap("محاولة اختراق لوحة تحكم المدير (Admin Portal)");
-                alert("Invalid Admin Credentials. IP Logged.");
-            });
-
-            // --- 3. فخ المفتاح المسرب (إذا الهاكر حدد المفتاح ونسخه CTRL+C) ---
-            document.addEventListener('copy', (e) => {
-                const copiedText = document.getSelection().toString();
-                if (copiedText.includes("AKIA-SECRET-ADMIN-KEY")) {
-                    fireTrap("سرقة مفتاح API مسرب (Leaked Key)");
-                }
-            });
-
-            // --- 4. فخ الكوكيز المسمومة (Session Hijacking) ---
-            // نزرع كوكي وهمي بصلاحية مستخدم عادي أول ما يفتح الموقع
-            document.cookie = "admin_session=guest; path=/";
-            
-            // نراقب الكوكيز، إذا الهاكر غيرها إلى admin حتى يصعد صلاحياته... نصيده!
-            setInterval(() => {
-                if (document.cookie.includes("admin_session=admin") || document.cookie.includes("admin_session=true")) {
-                    fireTrap("تلاعب بالكوكيز (Session Hijacking)");
-                    document.cookie = "admin_session=guest; path=/"; // نرجعه عادي حتى لا يعلق الإنذار
-                }
-            }, 2000);
-            
-        })();
-    </script>
 </body>
 </html>
