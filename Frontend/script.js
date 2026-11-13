@@ -162,40 +162,91 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // إعداد المخطط البياني (Chart.js)
-    let geoChart;
-    const updateChart = (countryData) => {
-        const ctx = document.getElementById('geoChart');
-        if (!ctx) return;
-        
-        const labels = Object.keys(countryData);
-        const data = Object.values(countryData);
+    const canvas = document.getElementById('geoChart');
 
-        if (geoChart) geoChart.destroy(); 
+// [حل مشكلة التمدد اللانهائي]
+// إنشاء حاوية (Wrapper) برمجياً دون الحاجة لتعديل HTML
+if (!canvas.parentNode.classList.contains('chart-wrapper')) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chart-wrapper';
+    wrapper.style.position = 'relative';
+    wrapper.style.height = '300px'; // الارتفاع الثابت الذي سيمنع التمدد، يمكنك تغييره حسب رغبتك
+    wrapper.style.width = '100%';
+    
+    // وضع الحاوية قبل الكانفاس، ثم نقل الكانفاس بداخلها
+    canvas.parentNode.insertBefore(wrapper, canvas);
+    wrapper.appendChild(canvas);
+}
 
-        geoChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels.length > 0 ? labels : ['No Data'],
-                datasets: [{
-                    label: 'Intrusion Attempts',
-                    data: data.length > 0 ? data : [0],
-                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                    borderColor: '#3b82f6',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
+const ctx = canvas.getContext('2d');
+
+// إعداد تأثير التدرج النيوني
+let neonGradient = ctx.createLinearGradient(0, 0, 0, 300);
+neonGradient.addColorStop(0, 'rgba(0, 240, 255, 0.4)'); // لون سيان شفاف من الأعلى
+neonGradient.addColorStop(1, 'rgba(0, 240, 255, 0.0)'); // يتلاشى للأسفل
+
+const geoChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+        datasets: [{
+            label: 'Threat Intensity',
+            data: [5, 12, 8, 25, 14, 30, 18],
+            borderColor: '#00f0ff',
+            backgroundColor: neonGradient,
+            borderWidth: 2,
+            pointBackgroundColor: '#39ff14',
+            pointBorderColor: '#030712',
+            pointBorderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#ff003c',
+            fill: true,
+            tension: 0.4 // لجعل الخطوط منحنية بانسيابية
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false, // الآن ستعمل بشكل صحيح بفضل الحاوية الجديدة
+        plugins: {
+            legend: {
+                display: false
             },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
-                    x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+            tooltip: {
+                backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                titleColor: '#00f0ff',
+                bodyColor: '#39ff14',
+                borderColor: '#00f0ff',
+                borderWidth: 1,
+                titleFont: { family: "'Orbitron', sans-serif" },
+                bodyFont: { family: "'Fira Code', monospace" }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: 'rgba(0, 240, 255, 0.05)',
+                    borderColor: 'transparent'
+                },
+                ticks: {
+                    color: '#64748b',
+                    font: { family: "'Fira Code', monospace", size: 10 }
+                }
+            },
+            y: {
+                grid: {
+                    color: 'rgba(0, 240, 255, 0.05)',
+                    borderColor: 'transparent'
+                },
+                ticks: {
+                    color: '#64748b',
+                    font: { family: "'Fira Code', monospace", size: 10 },
+                    beginAtZero: true
                 }
             }
-        });
-    };
-
+        }
+    }
+});
     // جلب البيانات كل ثانيتين (لأكشن أسرع بالمعرض)
     fetchAnalytics();
     setInterval(fetchAnalytics, 2000);

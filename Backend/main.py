@@ -87,6 +87,55 @@ def get_logs():
         })
     return jsonify(logs), 200
 
+# ---------------------------------------------------------
+# فخاخ الملفات الحساسة (Canary Files Honeytokens)
+# ---------------------------------------------------------
+@app.route('/database_backup_2026.zip', methods=['GET'])
+@app.route('/.env', methods=['GET'])
+@app.route('/config.bak', methods=['GET'])
+def canary_file_trap():
+    hacker_ip = request.remote_addr
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    requested_file = request.path  # اسم الملف الذي حاول المخترق تحميله
+
+    # تسجيل الهجمة مباشرة في قاعدة البيانات
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO attacks (target_site, honeytoken_type, hacker_ip, timestamp, details)
+        VALUES (?, ?, ?, ?, ?)
+    ''', ("متجر الملابس (E-Commerce)", f"Canary File Access ({requested_file})", hacker_ip, timestamp, f"Attempted to download {requested_file}"))
+    conn.commit()
+    conn.close()
+
+    print(f"🚨 [CANARY ALERT] محاولة تحميل ملف حساس ({requested_file}) من الـ IP: {hacker_ip}")
+
+    # إرجاع خطأ 403 وهمي لإيهام المخترق أن الملف موجود لكنه محمي
+    return jsonify({"error": "403 Forbidden: Access to sensitive backup files is restricted."}), 403
+
+@app.route('/api/stats', methods=['GET'])
+def get_attack_stats():
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        
+        # استخراج أنواع الفخاخ وعدد الهجمات لكل نوع
+        cursor.execute('''
+            SELECT honeytoken_type, COUNT(*) as count 
+            FROM attacks 
+            GROUP BY honeytoken_type
+        ''')
+        data = cursor.fetchall()
+        conn.close()
+
+        # تجهيز البيانات للإرسال
+        labels = [row[0] for row in data]
+        counts = [row[1] for row in data]
+
+        return jsonify({"labels": labels, "counts": counts}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     print("🚀 ShadowTrap Server V2.0 is Running...")
     app.run(host='0.0.0.0', port=5000, debug=True)
