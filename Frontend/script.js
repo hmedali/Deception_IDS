@@ -42,10 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // جعل دالة الإشعارات عامة حتى تعمل مع أزرار صفحة الإعدادات
     window.showToast = showToast;
-// =========================================================
-    // --- 3. Generator Logic (توليد الفخاخ الجديدة) ---
+
     // =========================================================
- // =========================================================
     // --- 3. Generator Logic (توليد الفخاخ الجديدة) ---
     // =========================================================
     const generateBtn = document.getElementById('generate-btn');
@@ -55,51 +53,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (generateBtn) {
         generateBtn.addEventListener('click', () => {
-            // تصفير الأنيميشن حتى يشتغل كل ضغطة
-            snippetBox.style.animation = 'none';
-            snippetBox.offsetHeight; 
-            
-            // توليد آيدي جديد للعميل بس نستخدم المفتاح الحقيقي مال سيرفرنا!
             const uniqueToken = 'HT-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            const validApiKey = 'ST-DEMO-KEY-2026'; // مفتاح سيرفرك الحقيقي
             
             const snippetCode = `
-<!-- ========================================== -->
-<!-- 🚨 SHADOWTRAP PAYLOAD: ${uniqueToken} 🚨 -->
-<!-- ========================================== -->
+<!-- ShadowTrap Adaptive Honeytoken (V2.0) -->
 <script>
     (function(){
-        const targetSite = "Client Portal (${uniqueToken})";
-        const clientApiKey = "${validApiKey}"; 
+        const targetSite = "New Client Node";
+        const honeytokenType = "Generated Trap (${uniqueToken})";
+        const clientApiKey = "ST-DEMO-KEY-2026"; 
         const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
-        let triggered = false;
         
-        // فخ أدوات المطور (F12) للمواقع الخارجية
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i'))) {
-                if(triggered) return;
-                triggered = true;
-                
-                fetch(shadowTrapApi, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'X-API-Key': clientApiKey
-                    },
-                    body: JSON.stringify({ target_site: targetSite, honeytoken_type: "Unauthorized Scan (F12)" })
-                }).catch(err => console.error(err));
-                
-                setTimeout(() => triggered = false, 5000);
-            }
+        window.addEventListener('contextmenu', (e) => {
+            console.warn("ShadowTrap: Suspicious activity detected.");
+            fetch(shadowTrapApi, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-API-Key': clientApiKey
+                },
+                body: JSON.stringify({ target_site: targetSite, honeytoken_type: honeytokenType })
+            }).catch(err => console.error(err));
         });
     })();
 </script>`.trim();
 
             generatedCodeText.textContent = snippetCode;
             snippetBox.style.display = 'block';
+            snippetBox.style.animation = 'fadeIn 0.5s ease-in-out';
             
-            snippetBox.style.animation = 'fadeIn 0.4s ease-in-out';
-            showToast(`Payload Validated: ${uniqueToken}`, 'success');
+            showToast('V2.0 Payload generated securely!', 'success');
         });
     }
 
@@ -146,23 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let termHtml = `<span style="color: #fff;">[ root@shadowtrap ]#</span> Connected to SQLite DB.<br>
                             <span style="color: #fff;">[ root@shadowtrap ]#</span> Tailing /var/log/shadowtrap.log...<br>
                             <span style="color: var(--text-muted);">---------------------------------------------------</span><br>`;
-            // تحديد مستوى الخطورة بناءً على الفخ
-                let severity = 'CRITICAL';
-                let severityBadge = '<span class="badge high">CRITICAL</span>';
-                if (log.honeytoken_type.includes('DevTools') || log.honeytoken_type.includes('Keyboard')) {
-                    severity = 'WARNING';
-                    severityBadge = '<span class="badge" style="background: rgba(255, 165, 0, 0.1); color: orange; border: 1px solid orange;">WARNING</span>';
-                }
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${log.timestamp}</td>
-                    <td style="color: var(--neon-green); font-weight: bold;">${log.target_site}</td>
-                    <td style="color: var(--neon-red); font-family: var(--font-code);">${log.honeytoken_type}</td>
-                    <td>${log.hacker_ip}</td>
-                    <td>📍 <small style="color:var(--text-muted);">Unknown</small></td>
-                    <td>${severityBadge}</td> <!-- تم تغيير الزر الشكلي إلى مستوى الخطورة -->
-                `;
             const countryCounts = {}; 
 
             data.forEach((log, idx) => {
@@ -180,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="color: var(--neon-green); font-weight: bold;">${esc(log.target_site)}</td>
                     <td style="color: var(--neon-red); font-family: var(--font-code);">${esc(log.honeytoken_type)}</td>
                     <td>${esc(log.hacker_ip)}</td>
-                    <td>📍 <small style="color:var(--text-muted);">Unknown</small></td>
+                    <td>📍 ${esc(log.location || 'Unknown')}</td>
                     <td><button class="block-btn${blocked ? ' blocked' : ''}" data-ip="${esc(log.hacker_ip)}" ${blocked ? 'disabled' : ''} onclick="blockIpAction(this, this.dataset.ip)"><i class="fa-solid ${blocked ? 'fa-ban' : 'fa-shield'}"></i> ${blocked ? 'BLOCKED' : 'BLOCK IP'}</button></td>`;
                 if (logsBody) logsBody.appendChild(row);
 
@@ -194,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 terminalEl.innerHTML = termHtml + '<span class="cursor"></span>';
                 if (atEnd) terminalEl.scrollTop = terminalEl.scrollHeight;
             }
-            if (typeof updateChart === "function") updateChart(countryCounts);
+            updateChart(data);
 
         } catch (error) {
             console.error('Error fetching logs:', error);
@@ -228,10 +195,10 @@ neonGradient.addColorStop(1, 'rgba(0, 240, 255, 0.0)'); // يتلاشى للأس
 const geoChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+        labels: [],
         datasets: [{
-            label: 'Threat Intensity',
-            data: [5, 12, 8, 25, 14, 30, 18],
+            label: 'Attacks / minute',
+            data: [],
             borderColor: '#00f0ff',
             backgroundColor: neonGradient,
             borderWidth: 2,
@@ -274,6 +241,7 @@ const geoChart = new Chart(ctx, {
                 }
             },
             y: {
+                beginAtZero: true,
                 grid: {
                     color: 'rgba(0, 240, 255, 0.05)',
                     borderColor: 'transparent'
@@ -281,22 +249,28 @@ const geoChart = new Chart(ctx, {
                 ticks: {
                     color: '#64748b',
                     font: { family: "'Fira Code', monospace", size: 10 },
-                    beginAtZero: true
+                    precision: 0, stepSize: 1
                 }
             }
         }
     }
 });
-    // مخطط حي: نقطة جديدة كل تحديث، وقفزة عند هجوم جديد
-    let lastTotal = 0;
-    function updateChart(counts) {
-        const total = Object.values(counts).reduce((a, b) => a + b, 0);
-        const spike = lastTotal > 0 && total > lastTotal ? (total - lastTotal) * 20 : 0;
-        lastTotal = total;
-        geoChart.data.datasets[0].data.push(Math.round(6 + Math.random() * 8 + spike));
-        geoChart.data.datasets[0].data.shift();
-        geoChart.data.labels.push(new Date().toLocaleTimeString('en-GB'));
-        geoChart.data.labels.shift();
+    // مخطط حقيقي: عدد الهجمات لكل دقيقة خلال آخر 30 دقيقة، محسوب من السجلات الفعلية
+    let lastChartKey = '';
+    function updateChart(logs) {
+        const BUCKETS = 30;
+        const start = new Date(); start.setSeconds(0, 0); start.setMinutes(start.getMinutes() - (BUCKETS - 1));
+        const counts = new Array(BUCKETS).fill(0);
+        logs.forEach(l => {
+            const i = Math.floor((new Date(String(l.timestamp).replace(' ', 'T')) - start) / 60000);
+            if (i >= 0 && i < BUCKETS) counts[i]++;
+        });
+        const key = start.getTime() + '|' + counts.join(',');
+        if (key === lastChartKey) return;
+        lastChartKey = key;
+        geoChart.data.labels = counts.map((_, i) =>
+            new Date(start.getTime() + i * 60000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }));
+        geoChart.data.datasets[0].data = counts;
         geoChart.update();
     }
 
@@ -336,27 +310,23 @@ const geoChart = new Chart(ctx, {
         }
     }
 
-    // ب. تصدير التقرير الجنائي (CSV) للمدراء
+    // تصدير التقرير الجنائي (CSV) للمدراء
     const exportBtn = document.getElementById('export-btn');
     if(exportBtn) {
         exportBtn.addEventListener('click', () => {
             let csvContent = "\uFEFFTime,Target Site,Honeytoken,Hacker IP,Severity\n";
             const rows = document.querySelectorAll('#logs-body tr');
             
-            // دالة لمنع ثغرة CSV Injection وتنسيق القيم
-            const escapeCSV = (v) => '"' + String(v).replace(/"/g, '""').replace(/^[=+\-@]/, "'$&") + '"';
-
             rows.forEach(row => {
                 let cols = row.querySelectorAll('td');
                 if(cols.length > 0) {
-                    let severity = cols[2].innerText.includes('DevTools') || cols[2].innerText.includes('Keyboard') ? 'WARNING' : 'CRITICAL';
                     let rowData = [
-                        escapeCSV(cols[0].innerText), 
-                        escapeCSV(cols[1].innerText), 
-                        escapeCSV(cols[2].innerText), 
-                        escapeCSV(cols[3].innerText), 
-                        escapeCSV(severity)         
-                    ].join(",");
+                        cols[0].innerText, 
+                        cols[1].innerText, 
+                        cols[2].innerText, 
+                        cols[3].innerText, 
+                        "CRITICAL"         
+                    ].map(v => '"' + String(v).replace(/"/g, '""').replace(/^[=+\-@]/, "'$&") + '"').join(",");
                     csvContent += rowData + "\n";
                 }
             });
@@ -372,6 +342,7 @@ const geoChart = new Chart(ctx, {
             showToast('Forensics Report Exported Successfully!', 'success');
         });
     }
+
     // زر حظر الـ IP (Active Mitigation)
     window.blockIpAction = function(buttonElement, ip) {
         buttonElement.innerHTML = '<i class="fa-solid fa-ban"></i> BLOCKED';

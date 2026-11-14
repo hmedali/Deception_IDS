@@ -1,142 +1,191 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response, render_template_string
 from flask_cors import CORS
 import sqlite3
 import datetime
+import time
+import ipaddress, json, urllib.request
 
 app = Flask(__name__)
-CORS(app) # للسماح باستقبال الهجمات من المواقع الخارجية
+CORS(app)
+
+DB_NAME = "shadowtrap.db"
+DECOY_SITE = "ShadowTrap Decoy Server"
 
 # ---------------------------------------------------------
-# 1. إعداد قاعدة البيانات (تعديل رقم 3)             
+# قيم الطُعم (كلها وهمية) - تتكرر عبر الفخاخ لربطها ببعض
 # ---------------------------------------------------------
-DB_NAME = "shadowtrap.db"
+DECOY_EMAIL = "admin.backup@techcorp-internal.com"   # فخ 7
+DECOY_USER = "sysadmin_backup"                       # فخ 9
+DECOY_PASS = "Backup@2026!"
+DECOY_API_KEY = "sk_live_ST_9f3a1c77d2e84b60a5c1"    # فخ 10
+
+_geo = {}
+def locate(ip):
+    """موقع الـ IP: الشبكة المحلية تُعرف مباشرة، والعام يُستعلم عنه ويُخزَّن"""
+    try:
+        a = ipaddress.ip_address(ip)
+        if a.is_private or a.is_loopback:
+            return "Local Network"
+    except ValueError:
+        return "Unknown"
+    if ip in _geo:
+        return _geo[ip]
+    try:
+        with urllib.request.urlopen(f"http://ip-api.com/json/{ip}?fields=status,country,city", timeout=2) as r:
+            d = json.load(r)
+        if d.get("status") == "success":
+            _geo[ip] = f"{d['city']}, {d['country']}"
+            return _geo[ip]
+    except Exception:
+        pass
+    return "Unknown"
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    # إنشاء جدول الهجمات مع فصل الموقع عن نوع الفخ (تعديل رقم 1)
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS attacks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            target_site TEXT,
-            honeytoken_type TEXT,
-            hacker_ip TEXT,
-            timestamp TEXT,
-            details TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    conn.execute('''CREATE TABLE IF NOT EXISTS attacks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, target_site TEXT,
+        honeytoken_type TEXT, hacker_ip TEXT, timestamp TEXT, details TEXT)''')
+    conn.commit(); conn.close()
 
-# تشغيل دالة بناء قاعدة البيانات عند بدء السيرفر
 init_db()
 
+_recent = {}  # منع تكرار نفس الإنذار من نفس الـ IP خلال 5 ثواني
+
+def log_attack(site, trap, details=""):
+    ip = request.remote_addr
+    now = time.time()
+    if now - _recent.get((ip, trap), 0) < 5:
+        return
+    _recent[(ip, trap)] = now
+    conn = sqlite3.connect(DB_NAME)
+    conn.execute('INSERT INTO attacks (target_site, honeytoken_type, hacker_ip, timestamp, details) VALUES (?,?,?,?,?)',
+                 (str(site)[:100], str(trap)[:200], ip,
+                  datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), str(details)[:300]))
+    conn.commit(); conn.close()
+    print(f"🚨 [ALERT] {trap} | IP: {ip}")
+
 # ---------------------------------------------------------
-# 2. واجهة استقبال الهجمات (API)
+# واجهات ShadowTrap الأساسية
 # ---------------------------------------------------------
 @app.route('/api/alert', methods=['POST'])
 def receive_alert():
-    data = request.json
-    
-    # التحقق من المفتاح السري (لضمان أن التنبيه من موقعنا)
-    api_key = request.headers.get('X-API-Key')
-    if api_key != "ST-DEMO-KEY-2026":
+    if request.headers.get('X-API-Key') != "ST-DEMO-KEY-2026":
         return jsonify({"status": "error", "message": "Unauthorized"}), 403
-
-    # استلام البيانات مفصلة
-    target_site = data.get('target_site', 'Unknown Site')
-    honeytoken_type = data.get('honeytoken_type', 'Unknown Trap')
-    
-    # سحب IP الهاكر (لو كان على سيرفر حقيقي، نستخدم request.remote_addr)
-    hacker_ip = request.remote_addr
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # حفظ الهجمة في قاعدة البيانات الدائمة
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO attacks (target_site, honeytoken_type, hacker_ip, timestamp, details)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (target_site, honeytoken_type, hacker_ip, timestamp, "Suspicious Activity Logged"))
-    conn.commit()
-    conn.close()
-
-    print(f"🚨 [ALERT] الهجوم على: {target_site} | نوع الفخ: {honeytoken_type} | من الـ IP: {hacker_ip}")
-    
+    data = request.get_json(silent=True) or {}
+    log_attack(data.get('target_site', 'Unknown Site'), data.get('honeytoken_type', 'Unknown Trap'),
+               "Suspicious Activity Logged")
     return jsonify({"status": "success", "message": "Trap triggered successfully!"}), 200
 
-# ---------------------------------------------------------
-# 3. واجهة قراءة الهجمات (لعرضها في الداشبورد)
-# ---------------------------------------------------------
 @app.route('/api/logs', methods=['GET'])
 def get_logs():
     conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('SELECT target_site, honeytoken_type, hacker_ip, timestamp FROM attacks ORDER BY id DESC')
-    rows = cursor.fetchall()
+    rows = conn.execute('SELECT target_site, honeytoken_type, hacker_ip, timestamp FROM attacks ORDER BY id DESC').fetchall()
     conn.close()
-
-    # تحويل البيانات إلى صيغة JSON للداشبورد
-    logs = []
-    for row in rows:
-        logs.append({
-            "target_site": row[0],
-            "honeytoken_type": row[1],
-            "hacker_ip": row[2],
-            "timestamp": row[3]
-        })
-    return jsonify(logs), 200
-
-# ---------------------------------------------------------
-# فخاخ الملفات الحساسة (Canary Files Honeytokens)
-# ---------------------------------------------------------
-@app.route('/database_backup_2026.zip', methods=['GET'])
-@app.route('/.env', methods=['GET'])
-@app.route('/config.bak', methods=['GET'])
-def canary_file_trap():
-    hacker_ip = request.remote_addr
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    requested_file = request.path  # اسم الملف الذي حاول المخترق تحميله
-
-    # تسجيل الهجمة مباشرة في قاعدة البيانات
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO attacks (target_site, honeytoken_type, hacker_ip, timestamp, details)
-        VALUES (?, ?, ?, ?, ?)
-    ''', ("متجر الملابس (E-Commerce)", f"Canary File Access ({requested_file})", hacker_ip, timestamp, f"Attempted to download {requested_file}"))
-    conn.commit()
-    conn.close()
-
-    print(f"🚨 [CANARY ALERT] محاولة تحميل ملف حساس ({requested_file}) من الـ IP: {hacker_ip}")
-
-    # إرجاع خطأ 403 وهمي لإيهام المخترق أن الملف موجود لكنه محمي
-    return jsonify({"error": "403 Forbidden: Access to sensitive backup files is restricted."}), 403
+    return jsonify([{"target_site": r[0], "honeytoken_type": r[1], "hacker_ip": r[2], "timestamp": r[3], "location": locate(r[2])} for r in rows]), 200
 
 @app.route('/api/stats', methods=['GET'])
 def get_attack_stats():
-    try:
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
-        
-        # استخراج أنواع الفخاخ وعدد الهجمات لكل نوع
-        cursor.execute('''
-            SELECT honeytoken_type, COUNT(*) as count 
-            FROM attacks 
-            GROUP BY honeytoken_type
-        ''')
-        data = cursor.fetchall()
-        conn.close()
+    conn = sqlite3.connect(DB_NAME)
+    data = conn.execute('SELECT honeytoken_type, COUNT(*) FROM attacks GROUP BY honeytoken_type').fetchall()
+    conn.close()
+    return jsonify({"labels": [r[0] for r in data], "counts": [r[1] for r in data]}), 200
 
-        # تجهيز البيانات للإرسال
-        labels = [row[0] for row in data]
-        counts = [row[1] for row in data]
+# ---------------------------------------------------------
+# فخاخ الملفات القديمة (Canary Files)
+# ---------------------------------------------------------
+@app.route('/database_backup_2026.zip')
+@app.route('/.env')
+@app.route('/config.bak')
+def canary_file_trap():
+    log_attack("متجر الملابس (E-Commerce)", f"Canary File Access ({request.path})", f"Attempted to download {request.path}")
+    return jsonify({"error": "403 Forbidden: Access to sensitive backup files is restricted."}), 403
 
-        return jsonify({"labels": labels, "counts": counts}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# =========================================================
+# فخ 8: Decoy Configuration File (config_backup.json)
+# =========================================================
+@app.route('/config_backup.json')
+def decoy_config():
+    log_attack(DECOY_SITE, "Decoy Configuration File (config_backup.json)", "Fake config downloaded")
+    return jsonify({
+        "app": "techcorp-portal", "env": "production",
+        "admin_email": DECOY_EMAIL,
+        "admin_user": DECOY_USER, "admin_password": DECOY_PASS,
+        "internal_api_key": DECOY_API_KEY,
+        "database": {"host": "10.0.0.15", "user": "portal_admin", "password": "Tr@p-Fake-2026"}
+    })
 
+# =========================================================
+# فخ 6: Decoy Database Credentials
+# =========================================================
+@app.route('/db_credentials.txt')
+@app.route('/database.yml')
+def decoy_db_credentials():
+    log_attack(DECOY_SITE, f"Decoy Database Credentials ({request.path})", "Fake DB credentials downloaded")
+    body = "DB_HOST=10.0.0.15\nDB_PORT=5432\nDB_NAME=portal_prod\nDB_USER=portal_admin\nDB_PASS=Tr@p-Fake-2026\n"
+    return body, 200, {"Content-Type": "text/plain"}
+
+# =========================================================
+# فخ 5 + 9 + 7 + 4: صفحة الأدمن الوهمية
+# =========================================================
+LOGIN_HTML = """<!DOCTYPE html><html><head><title>Admin Panel</title>
+<style>body{font-family:Segoe UI,sans-serif;background:#f0f2f5;display:grid;place-items:center;height:100vh;margin:0}
+form{background:#fff;padding:35px;border-radius:10px;box-shadow:0 4px 20px #0001;width:320px}
+input,button{width:100%;padding:11px;margin:8px 0;box-sizing:border-box}button{background:#1a73e8;color:#fff;border:0;border-radius:5px}
+.e{color:#c00;font-size:13px}</style></head><body>
+<form method="post"><h3>Administrator Login</h3>
+<input name="username" placeholder="Username or Email"><input name="password" type="password" placeholder="Password">
+<button>Sign in</button>{% if error %}<div class="e">{{ error }}</div>{% endif %}</form></body></html>"""
+
+def check_session_tamper():
+    """فخ 4: كوكي admin_session المفروض 'guest' - أي قيمة ثانية = تلاعب"""
+    v = request.cookies.get('admin_session')
+    if v and v.lower() != 'guest':
+        log_attack(DECOY_SITE, "Decoy Session Cookie Tampered (admin_session)", f"value={v[:30]}")
+
+@app.route('/admin-dashboard-login', methods=['GET', 'POST'])
+@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/wp-login.php', methods=['GET', 'POST'])
+@app.route('/phpmyadmin', methods=['GET', 'POST'])
+def decoy_admin_login():
+    check_session_tamper()
+    error, status = None, 200
+    if request.method == 'POST':
+        user = (request.form.get('username') or '').strip()[:100]
+        if user.lower() == DECOY_USER:
+            log_attack(DECOY_SITE, "Decoy User Account Login (sysadmin_backup)", "Used credentials found in fake config")
+        elif user.lower() == DECOY_EMAIL:
+            log_attack(DECOY_SITE, "Fake Admin Email Used (admin login)", f"email={user}")
+        else:
+            log_attack(DECOY_SITE, f"Decoy Admin Login Attempt ({request.path})", f"username={user}")  # كلمة السر لا تُحفظ
+        error, status = "Invalid credentials. This incident has been logged.", 401
+    else:
+        log_attack(DECOY_SITE, f"Decoy Admin Login Page Visit ({request.path})", "Hidden admin page opened")
+    resp = make_response(render_template_string(LOGIN_HTML, error=error), status)
+    resp.set_cookie('admin_session', 'guest', samesite='Lax')   # الطُعم: كوكي يغري بتغييره لـ admin
+    return resp
+
+# فخ 7: البريد الإداري الوهمي عبر "نسيت كلمة السر"
+@app.route('/api/v1/auth/forgot-password', methods=['POST'])
+def decoy_forgot_password():
+    data = request.get_json(silent=True) or request.form
+    email = str(data.get('email', '')).strip().lower()[:100]
+    if email == DECOY_EMAIL:
+        log_attack(DECOY_SITE, "Fake Admin Email Used (password reset)", f"email={email}")
+    return jsonify({"message": "If the account exists, a reset link was sent."}), 200
+
+# =========================================================
+# فخ 10: Decoy API Endpoint
+# =========================================================
+@app.route('/api/v1/internal/users')
+def decoy_api_users():
+    check_session_tamper()
+    if DECOY_API_KEY in request.headers.get('Authorization', ''):
+        log_attack(DECOY_SITE, "Decoy API Key Used (/api/v1/internal/users)", "Key stolen from fake config")
+        return jsonify([{"id": 1, "user": DECOY_USER, "role": "superadmin"},
+                        {"id": 2, "user": "j.salem", "role": "editor"}])
+    log_attack(DECOY_SITE, "Decoy API Endpoint Access (/api/v1/internal/users)", "No valid key")
+    return jsonify({"error": "401 Unauthorized"}), 401
 
 if __name__ == '__main__':
-    print("🚀 ShadowTrap Server V2.0 is Running...")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    print("🚀 ShadowTrap Server V2.1 is Running...")
+    app.run(host='127.0.0.1', port=5000, debug=False)

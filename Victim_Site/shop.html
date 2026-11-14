@@ -264,7 +264,7 @@ updateCart();
 <!-- 1. الديكورات المخفية للهاكرز -->
 <div style="display:none;">
     <!-- أ. فخ الرابط المخفي -->
-    <a href="/admin-dashboard-login" id="ht-hidden-link" aria-hidden="true">Admin Login</a>
+    <a href="http://127.0.0.1:5000/admin-dashboard-login" id="ht-hidden-link" aria-hidden="true">Admin Login</a>
     
     <!-- ب. فخ ملف النسخة الاحتياطية -->
     <!-- ب. فخ ملف النسخة الاحتياطية (مربوط بسيرفر الكناري مباشرة) -->
@@ -378,5 +378,11 @@ updateCart();
     })();
 </script>
 
+
+    <!-- TODO(devops): remove before release!
+         staging config : http://127.0.0.1:5000/config_backup.json
+         db credentials : http://127.0.0.1:5000/db_credentials.txt
+         admin panel    : http://127.0.0.1:5000/admin-dashboard-login
+         owner contact  : admin.backup@techcorp-internal.com -->
 </body>
 </html>

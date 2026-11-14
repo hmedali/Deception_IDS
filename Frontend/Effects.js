@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // stagger indexes + glitch titles
   document.querySelectorAll('.nav-item,.stat-card').forEach((el, i) => el.style.setProperty('--i', i % 6));
-  document.querySelectorAll('.logo,.header h2').forEach(el => el.classList.add('glitch'));
+  document.querySelectorAll('.logo-title,.header h2').forEach(el => el.classList.add('glitch'));
 
   // sidebar footer: clock + uptime
   const foot = document.createElement('div');

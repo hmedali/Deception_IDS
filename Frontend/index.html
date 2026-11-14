@@ -235,7 +235,11 @@
     <canvas id="bg-net"></canvas>
 
     <aside class="sidebar">
-        <div class="logo"><i class="fa-solid fa-shield-virus"></i>SHADOWTRAP</size></div>
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-shield-virus"></i></div>
+            <div class="logo-title">SHADOWTRAP</div>
+            <div class="logo-sub">ACTIVE DEFENSE · SOC</div>
+        </div>
         <div class="nav-item active" data-target="dashboard"><i class="fa-solid fa-tower-broadcast"></i> Threat Radar</div>
         <div class="nav-item" data-target="traps"><i class="fa-solid fa-spider"></i> Deception Nodes</div>
         <div class="nav-item" data-target="logs"><i class="fa-solid fa-terminal"></i> LIVE LOGS STREAM</div>
@@ -272,7 +276,7 @@
 
             <div class="dash-row">
                 <div class="generator-section">
-                    <h3><i class="fa-solid fa-earth-americas"></i> GLOBAL THREAT ORIGINS</h3>
+                    <h3><i class="fa-solid fa-earth-americas"></i> ATTACKS TIMELINE (LAST 30 MIN)</h3>
                     <canvas id="geoChart" height="80"></canvas>
                 </div>
             </div>
@@ -293,7 +297,7 @@
                             <th>HONEYTOKEN TYPE</th>
                             <th>SOURCE IP</th>
                             <th>GEO LOCATION</th>
-                            <th>SEVERITY</th>
+                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody id="logs-body">
