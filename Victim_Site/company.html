@@ -3,140 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corporate Portal | بوابة الشركة</title>
+    <title>Corporate Portal | Secure Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
+        :root {
+            --bg-main: #f4f7f6;
+            --surface: #ffffff;
+            --ink: #1e293b;
+            --muted: #64748b;
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --line: #e2e8f0;
+            --danger: #dc2626;
+            --shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+            --radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Inter', Tahoma, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--ink);
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 20px;
         }
+
+        .security-badge {
+            position: absolute;
+            top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(37, 99, 235, 0.15);
+        }
+
         .login-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-color: var(--surface);
+            padding: 45px 35px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
             text-align: center;
+            border: 1px solid var(--line);
+            position: relative;
+            animation: fadeIn 0.4s ease;
         }
-        .logo {
-            font-size: 32px;
-            color: #1a73e8;
-            margin-bottom: 10px;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        .logo-box {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            color: var(--accent);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px rgba(37,99,235,0.1);
+        }
+
         .login-container h2 {
-            margin: 0 0 20px;
-            color: #333;
-            font-weight: 600;
+            margin: 0 0 8px;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 24px;
         }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
         .input-group {
             margin-bottom: 20px;
             text-align: left;
         }
+
         .input-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-size: 14px;
+            margin-bottom: 6px;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 700;
         }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 15px;
+        }
+
         .input-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .input-group input:focus {
-            border-color: #1a73e8;
+            padding: 13px 14px 13px 42px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            font-size: 14px;
+            background: #fafafa;
             outline: none;
+            transition: all 0.25s ease;
+            color: var(--ink);
         }
+
+        .input-group input:focus {
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
         .login-btn {
-            background-color: #1a73e8;
+            background-color: var(--accent);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 13px;
             width: 100%;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+            margin-top: 10px;
         }
+
         .login-btn:hover {
-            background-color: #1557b0;
+            background-color: var(--accent-hover);
         }
+
+        .login-btn:active {
+            transform: scale(0.98);
+        }
+
         .footer-text {
-            margin-top: 20px;
+            margin-top: 25px;
+            font-size: 12px;
+            color: var(--muted);
+            border-top: 1px solid var(--line);
+            padding-top: 20px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translate(-50%, 20px);
+            background: var(--primary);
+            color: white;
+            padding: 11px 22px;
+            border-radius: 30px;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.25s ease;
+            z-index: 100;
             font-size: 13px;
-            color: #777;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
         }
     </style>
 </head>
 <body>
 
+    <div class="security-badge">
+        <i class="fa-solid fa-shield-halved"></i> Protected by ShadowTrap
+    </div>
+
     <div class="login-container">
-        <div class="logo">
+        <div class="logo-box">
             <i class="fa-solid fa-building-shield"></i>
         </div>
-        <h2>Company Portal</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 30px;">Authorized Personnel Only</p>
+        <h2>Corporate Portal</h2>
+        <p class="subtitle">Authorized Personnel Only • Secure Gateway</p>
         
-        <form onsubmit="event.preventDefault(); alert('Access Denied: Invalid Credentials');">
+        <form onsubmit="handleLogin(event)">
             <div class="input-group">
                 <label>Employee ID</label>
-                <input type="text" placeholder="Enter your ID" required>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-id-badge"></i>
+                    <input type="text" placeholder="Enter your employee ID" required>
+                </div>
             </div>
             <div class="input-group">
                 <label>Password</label>
-                <input type="password" placeholder="Enter your password" required>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" placeholder="••••••••••••" required>
+                </div>
             </div>
             <button type="submit" class="login-btn">Secure Login</button>
         </form>
         
         <div class="footer-text">
-            &copy; 2026 TechCorp Inc. All rights reserved.
+            &copy; 2026 TechCorp Inc. All rights reserved. Secure Gateway v4.2
         </div>
     </div>
 
+    <div class="toast" id="toast">Access Denied: Invalid Credentials</div>
 
     <!-- ============================================== -->
     <!-- 🚨 SHADOWTRAP: FULL HONEYTOKEN ARSENAL (V2) 🚨 -->
     <!-- ============================================== -->
 
-    <!-- 1. الديكورات المخفية للهاكرز -->
-    <div style="display:none;">
-        <!-- أ. فخ الرابط المخفي -->
-        <a href="http://127.0.0.1:5000/admin-dashboard-login" id="ht-hidden-link" aria-hidden="true">Admin Login</a>
+    <div style="display:none;" aria-hidden="true">
+        <!-- A. Hidden Link Trap -->
+        <a href="http://127.0.0.1:5000/admin-dashboard-login" id="ht-hidden-link">Admin Login</a>
         
-        <!-- ب. فخ ملف النسخة الاحتياطية -->
+        <!-- B. Fake Backup File Trap -->
         <a href="#" id="ht-fake-backup">database_backup_2026.zip</a>
         
-        <!-- ج. فخ لوحة تحكم المدير الوهمية -->
+        <!-- C. Fake Admin Portal Form Trap -->
         <form id="ht-fake-admin">
             <input type="text" name="username" value="admin">
             <input type="password" name="password" value="">
             <button type="submit">Login as Admin</button>
         </form>
 
-        <!-- د. فخ المفتاح المسرب (مخفي كتعليق) -->
+        <!-- D. Leaked API Key Trap -->
         <!-- DEV NOTE: DO NOT DELETE THIS AWS KEY -> AKIA-SECRET-ADMIN-KEY-9988 -->
         <p id="ht-leaked-key">AKIA-SECRET-ADMIN-KEY-9988</p>
     </div>
 
-    <!-- 2. محرك الفخاخ الشامل (يجمع 8 أنواع فخاخ) -->
+    <!-- Honeytoken Traps Core Engine (8 Traps) -->
     <script>
+        function showToast(msg) {
+            let t = document.getElementById("toast");
+            t.textContent = msg;
+            t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 2800);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            showToast("Access Denied: Invalid credentials or unauthorized access.");
+        }
+
         (function(){
-            // 🔴 اسم الموقع: بوابة الشركة
-            const targetSite = "بوابة الشركة (Company Portal)"; 
+            const targetSite = "Company Portal"; 
             const clientApiKey = "ST-DEMO-KEY-2026";
             const shadowTrapApi = "http://127.0.0.1:5000/api/alert";
-            let triggeredTraps = new Set(); // لمنع التكرار
+            let triggeredTraps = new Set();
 
             function fireTrap(trapType) {
                 if (triggeredTraps.has(trapType)) return;
@@ -149,83 +292,83 @@
                     body: JSON.stringify({ target_site: targetSite, honeytoken_type: trapType })
                 }).catch(err => console.error("ShadowTrap Connection Error"));
                 
-                // تنظيف السجل بعد 5 ثواني
                 setTimeout(() => { triggeredTraps.delete(trapType); }, 5000);
             }
 
-            // --- 1. فخ اختصارات الكيبورد (F12, Inspect, View Source) ---
+            // --- 1. Keyboard Shortcut Trap (F12, Inspect, View Source) ---
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
-                    fireTrap("فتح أدوات المطور بالكيبورد (Keyboard Shortcut)");
+                    fireTrap("Keyboard Shortcut DevTools Detection");
                 }
             });
 
-            // --- 2. فخ تغير أبعاد الشاشة (DevTools Detection) ---
+            // --- 2. DevTools Window Size Heuristic ---
             setInterval(() => {
                 if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
-                    fireTrap("مراقبة أدوات المطور (DevTools Window)");
+                    fireTrap("DevTools Window Size Detection");
                 }
             }, 1500);
 
-            // --- 3. فخ الرابط المخفي (Hidden Endpoint) ---
+            // --- 3. Hidden Endpoint Link Trap ---
             const hiddenLink = document.getElementById('ht-hidden-link');
             if (hiddenLink) {
                 hiddenLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    fireTrap("النقر على رابط مخفي (Hidden Link Click)");
+                    fireTrap("Hidden Link Click");
                 });
             }
 
-            // --- 4. فخ ملف الباك أب (Fake Backup) ---
+            // --- 4. Fake Backup File Download Trap ---
             const backupLink = document.getElementById('ht-fake-backup');
             if (backupLink) {
                 backupLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    fireTrap("محاولة تحميل ملف النسخة الاحتياطية (Backup Download)");
-                    alert("Error 403: Access Denied. Incident Logged."); 
+                    fireTrap("Backup Download Attempt");
+                    showToast("Error 403: Access Denied. Incident Logged."); 
                 });
             }
 
-            // --- 5. فخ لوحة المدير الوهمية (Fake Admin Form) ---
+            // --- 5. Fake Admin Portal Form Submission Trap ---
             const adminForm = document.getElementById('ht-fake-admin');
             if (adminForm) {
                 adminForm.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    fireTrap("محاولة اختراق لوحة تحكم المدير (Admin Portal Login)");
-                    alert("Invalid Admin Credentials. IP Logged.");
+                    fireTrap("Admin Portal Login Attempt");
+                    showToast("Invalid Admin Credentials. IP Logged.");
                 });
             }
 
-            // --- 6. فخ المفتاح المسرب (Leaked API Key Copy) ---
+            // --- 6. Leaked API Key Copy Trap ---
             document.addEventListener('copy', (e) => {
                 const copiedText = document.getSelection().toString();
                 if (copiedText.includes("AKIA-SECRET-ADMIN-KEY")) {
-                    fireTrap("سرقة مفتاح API مسرب (Leaked Key)");
+                    fireTrap("Leaked API Key Copy");
                 }
             });
 
-            // --- 7. فخ سرقة الجلسات من LocalStorage ---
+            // --- 7. LocalStorage Token Theft Trap ---
             localStorage.setItem('admin_auth_token', 'super_secret_admin_token_998877');
             const originalGetItem = localStorage.getItem;
             localStorage.getItem = function(key) {
                 if (key === 'admin_auth_token') {
-                    fireTrap("محاولة سرقة توكن الإدارة (LocalStorage Theft)");
+                    fireTrap("LocalStorage Token Theft Attempt");
                 }
                 return originalGetItem.apply(this, arguments);
             };
 
-            // --- 8. فخ الكوكيز المسمومة (Session Hijacking) ---
+            // --- 8. Poisoned Cookie Session Hijacking Trap ---
             document.cookie = "admin_session=guest; path=/";
             setInterval(() => {
                 if (document.cookie.includes("admin_session=admin") || document.cookie.includes("admin_session=true")) {
-                    fireTrap("تلاعب بالكوكيز (Session Hijacking)");
-                    document.cookie = "admin_session=guest; path=/"; // إعادة تعيين الكوكي
+                    fireTrap("Session Hijacking / Cookie Tampering");
+                    document.cookie = "admin_session=guest; path=/";
                 }
             }, 2000);
             
         })();
     </script>
 
+    <!-- Additional Developer Notes -->
     <!-- TODO(devops): remove before release!
          staging config : http://127.0.0.1:5000/config_backup.json
          db credentials : http://127.0.0.1:5000/db_credentials.txt
