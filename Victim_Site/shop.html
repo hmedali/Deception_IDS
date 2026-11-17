@@ -644,21 +644,11 @@ function fireTrap(type){
 }
 
 /* 1. Keyboard shortcut trap */
-document.addEventListener("keydown",function(e){
-  const key=(e.key||"").toLowerCase();
-  if(key==="f12"||(e.ctrlKey&&e.shiftKey&&(key==="i"||key==="j"))||(e.ctrlKey&&key==="u")){
-    fireTrap("keyboard_shortcut_devtools");
-  }
-});
+
 
 /* 2. DevTools size-change heuristic (not a reliable security control) */
-let devtoolsWasOpen=false;
-setInterval(function(){
-  const threshold=160;
-  const detected=(window.outerWidth-window.innerWidth>threshold)||(window.outerHeight-window.innerHeight>threshold);
-  if(detected&&!devtoolsWasOpen)fireTrap("devtools_size_detection");
-  devtoolsWasOpen=detected;
-},1500);
+
+
 
 /* 3. Hidden admin link trap */
 document.getElementById("ht-hidden-link").addEventListener("click",function(e){
